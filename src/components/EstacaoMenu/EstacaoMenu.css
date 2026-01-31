@@ -1,0 +1,70 @@
+@media (max-width: 767px) {
+  .container-menu-estacoes {
+    max-width: 380px;
+    height: 200px;
+    margin: auto;
+    border: 1px solid #d9e3e7;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* background: #fff; */
+    background: #fafafa;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+
+  .titulo-selecao-estacao {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0e4d6f;
+    margin: auto;
+    padding-left: 15px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+  }
+
+  .scroll-menu-estacoes {
+    display: none;
+    width: auto;
+    height: 150px;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-y: auto; /* Enables scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth momentum scroll (iOS) */
+    border: 1px solid #d9e3e7;
+    border-radius: 8px;
+    /* background: #fff; */
+    background: #fafafa;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    /* gap: 8px; */
+    box-sizing: border-box;
+    touch-action: pan-y; /* Explicitly allow vertical dragging */
+  }
+  /* 1. Define a largura da barra vertical */
+  .scroll-menu-estacoes::-webkit-scrollbar {
+    width: 12px; /* Deixa a barra mais grossa */
+    display: block; /* Força a existência da estrutura */
+  }
+
+  /* 2. O fundo da barra (trilho) */
+  .scroll-menu-estacoes::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Cor do fundo da barra */
+    border-radius: 8px;
+  }
+
+  /* 3. A parte que se move (o "polegar" da barra) */
+  .scroll-menu-estacoes::-webkit-scrollbar-thumb {
+    background: #888; /* Cor da parte que arrasta */
+    border-radius: 8px; /* Arredondado para combinar com seu menu */
+    border: 2px solid #f1f1f1; /* Cria um respiro para não encostar na borda */
+  }
+
+  /* 4. Efeito ao passar o mouse ou interagir */
+  .scroll-menu-estacoes::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}

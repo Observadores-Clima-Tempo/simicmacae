@@ -1,0 +1,22 @@
+/* Esconde a mensagem por padrão */
+#mobile-only-message {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .App {
+    display: none;
+  }
+
+  /* Mostra a mensagem centralizada */
+  #mobile-only-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    background: #f8f9fa;
+  }
+}

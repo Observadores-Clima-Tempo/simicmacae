@@ -1,0 +1,44 @@
+@media (max-width: 767px) {
+.estacao-botao-menu {
+    padding: 10px;
+    border: none;
+    /* Removemos o border-radius global para a linha encostar nas pontas */
+    border-radius: 0;
+    background: #fafafa;
+    font-size: 16px;
+    
+    /* Alinhamento do texto à esquerda */
+    text-align: left;
+    width: 100%;
+
+    /* A linha horizontal cinza */
+    border-bottom: 1px solid #ccc;
+
+    /* Remove o contorno padrão ao clicar (opcional) */
+    outline: none;
+    transition: background 0.2s;
+
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+
+  }
+
+  /* Remove a linha do último botão para ficar mais limpo */
+  .estacao-botao-menu:last-child {
+    border-bottom: none;
+    border-radius: 0 0 5px 5px;
+  }
+
+  /* Arredonda os cantos de cima do primeiro botão */
+  .estacao-botao-menu:first-child {
+    border-top: none;
+    border-radius: 5px 5px 0 0;
+
+  }
+
+  /* Efeito de clique (mais escuro) */
+  .estacao-botao-menu:active {
+    background: #ccc; /* Um tom ainda mais escuro que o original */
+  }
+}

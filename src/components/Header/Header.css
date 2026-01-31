@@ -1,0 +1,28 @@
+@media (max-width: 767px) {
+    .menu-navegacao {
+        display: none;
+    }
+    .header-app {
+        margin-bottom: 10px;
+        border-bottom: 1.5px solid #d9e3e7;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        height: 60px;
+        
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        background-color: #0e4d6f;        
+    }
+    .titulo-app {
+        font-size: 24px;
+        text-align: center;
+        color: #d9e3e7;
+    }
+
+    .logo-termometro {
+        width: auto;
+        height: 75%;
+        margin-right: 10px;
+        margin-left: 20px;
+    }
+}
