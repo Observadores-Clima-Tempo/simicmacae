@@ -48,7 +48,7 @@ export const calculateHeatIndex = (temperaturaC, umidadeRelativa) => {
   const indiceCalorC = ((indiceCalorF - 32) * 5) / 9;
   const categoriaCalor = getCategoriaIndiceCalor(indiceCalorC);
 
-  return { indiceCalor: Math.round(indiceCalorC), ...categoriaCalor };
+  return { indiceCalor: indiceCalorC.toFixed(1), ...categoriaCalor };
 };
 
 /**
