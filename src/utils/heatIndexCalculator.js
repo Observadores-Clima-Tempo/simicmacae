@@ -12,7 +12,7 @@ export const calculateHeatIndex = (temperaturaC, umidadeRelativa) => {
   // o índice de calor é igual à própria temperatura.
   if (temperaturaF < 80) {
     const categoriaCalor = getCategoriaIndiceCalor(temperaturaC);
-    return { indiceCalor: temperaturaC.toFixed(1), ...categoriaCalor };
+    return { indiceCalor: Number(temperaturaC).toFixed(1), ...categoriaCalor };
   }
 
   // Equação de Regressão Múltipla da NOAA
