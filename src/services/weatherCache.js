@@ -57,7 +57,7 @@ function formatarDados(dados) {
       return { temperatura: null, umidade: null };
     }
     return {
-      temperatura: observation.metric.temp,
+      temperatura: observation.metric.temp.toFixed(1),
       umidade: observation.humidity,
     };
   }
