@@ -141,7 +141,7 @@ export default function EstacaoCard({ stationId, children }) {
             <td className="estacao-card-valor-tab">{dadosEstacao.umidade}%</td>
           </tr>
           <tr className="estacao-card-linha-tab">
-            <td className="estacao-card-titulo-tab">Índice de Calor:</td>
+            <td className="estacao-card-titulo-tab">Sensação Térmica:</td>
             <td className="estacao-card-valor-tab">
               {dadosEstacao.indiceCalor}°C
             </td>

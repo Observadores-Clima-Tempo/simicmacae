@@ -1,12 +1,12 @@
 @media (max-width: 767px) {
-.estacao-botao-menu {
+  .estacao-botao-menu {
     padding: 10px;
     border: none;
     /* Removemos o border-radius global para a linha encostar nas pontas */
     border-radius: 0;
     background: #fafafa;
     font-size: 16px;
-    
+
     /* Alinhamento do texto à esquerda */
     text-align: left;
     width: 100%;
@@ -21,7 +21,6 @@
     align-items: center;
     justify-content: flex-start;
     text-align: left;
-
   }
 
   /* Remove a linha do último botão para ficar mais limpo */
@@ -34,7 +33,6 @@
   .estacao-botao-menu:first-child {
     border-top: none;
     border-radius: 5px 5px 0 0;
-
   }
 
   /* Efeito de clique (mais escuro) */
