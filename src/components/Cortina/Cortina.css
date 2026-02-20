@@ -5,7 +5,7 @@
 
 @media (min-width: 768px) {
   .App {
-    display: none;
+    /* display: none; */
   }
 
   /* Mostra a mensagem centralizada */

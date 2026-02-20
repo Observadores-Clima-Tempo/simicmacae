@@ -6,6 +6,7 @@ import EstacaoCardList from "./components/EstacaoCardList/EstacaoCardList";
 import EstacaoCard from "./components/EstacaoCard/EstacaoCard";
 import { catalogoEstacoes } from "./data/estacoes";
 import Cortina from "./components/Cortina/Cortina";
+import EstacaoChart from "./components/EstacaoChart/EstacaoChart";
 
 function App() {
   const [estacaoSelecionadaInfo, setEstacaoSelecionadaInfo] = useState(() =>
@@ -13,6 +14,7 @@ function App() {
   );
   const [menuSelecionado, setMenuSelecionado] = useState("inicio");
 
+  // Função para renderizar o conteúdo da página com base no menu selecionado
   const conteudoPagina = () => {
     switch (menuSelecionado) {
       case "estacoes":
@@ -39,14 +41,18 @@ function App() {
             <EstacaoCard stationId={estacaoSelecionadaInfo.id}>
               {estacaoSelecionadaInfo.bairro}
             </EstacaoCard>
+            <EstacaoChart stationId={estacaoSelecionadaInfo.id}>
+              {estacaoSelecionadaInfo.bairro}
+            </EstacaoChart>
           </>
         );
     }
   };
 
+  // Renderização principal do app
   return (
     <>
-      <Cortina />
+      {/* <Cortina /> */}
       <div className="App">
         <Header
           menuSelecionado={menuSelecionado}

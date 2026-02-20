@@ -4,6 +4,8 @@
  * @param {number} umidadeRelativa - Umidade Relativa (0 a 100).
  * @returns {number} - Índice de Calor calculado em Celsius.
  */
+import { categoriasIndiceCalor } from "../data/heatIndex";
+
 export const calculateHeatIndex = (temperaturaC, umidadeRelativa) => {
   // Celsius para Fahrenheit
   const temperaturaF = (temperaturaC * 9) / 5 + 32;
@@ -55,21 +57,10 @@ export const calculateHeatIndex = (temperaturaC, umidadeRelativa) => {
  * Classifica o nível de risco baseado no Índice de Calor.
  */
 export const getCategoriaIndiceCalor = (indiceCalorC) => {
-  if (indiceCalorC < 27)
-    return { categoria: "Normal", classe: "ic-normal", cor: "#2ecc71" };
-  if (indiceCalorC < 32)
-    return { categoria: "Cuidado", classe: "ic-cuidado", cor: "#f1c40f" };
-  if (indiceCalorC < 41)
-    return {
-      categoria: "Cuidado Extremo",
-      classe: "ic-cuidado-extremo",
-      cor: "#e67e22",
-    };
-  if (indiceCalorC < 54)
-    return { categoria: "Perigo", classe: "ic-perigo", cor: "#e74c3c" };
-  return {
-    categoria: "Perigo Extremo",
-    classe: "ic-perigo-extremo",
-    cor: "#8e44ad",
-  };
+  const encontrada = categoriasIndiceCalor.find(
+    ({ intervalo }) => indiceCalorC >= intervalo.min && indiceCalorC < intervalo.max,
+  );
+  if (!encontrada) return categoriasIndiceCalor[categoriasIndiceCalor.length - 1];
+  const { categoria, classe, cor } = encontrada;
+  return { categoria, classe, cor };
 };

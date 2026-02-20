@@ -14,7 +14,7 @@ export const weatherServiceAPI = {
   },
 
   // Histórico de 24 horas
-  getHistoricoDiaAPI: async (stationId) => {
+  getHistoricoDiariaAPI: async (stationId) => {
     const url = `${BASE_URL}/observations/all/1day?stationId=${stationId}${commonParams}`;
     const response = await fetch(url);
     if (!response.ok) {
