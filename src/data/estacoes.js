@@ -14,7 +14,7 @@ export const catalogoEstacoes = {
     getTodasEstacoes: () => ESTACOES
 };
 
-const ESTACOES = [
+let ESTACOES = [
   {
     id: "IMACA6",
     bairro: "Miramar",
@@ -22,7 +22,7 @@ const ESTACOES = [
   },{
     id: "IMACA7",
     bairro: "Mirante da Lagoa",
-    operando: false
+    operando: true
   },{
     id: "IMACA13",
     bairro: "Trapiche",
@@ -34,15 +34,15 @@ const ESTACOES = [
   },{
     id: "IMACA23",
     bairro: "Imboassica",
-    operando: false
+    operando: true
   },{
     id: "IMACA26",
     bairro: "Granja dos Cavalheiros",
-    operando: false
+    operando: true
   },{
     id: "IMACA28",
     bairro: "Aroeira",
-    operando: false
+    operando: true
   },{
     id: "IMACA30",
     bairro: "Imboassica",
@@ -54,7 +54,7 @@ const ESTACOES = [
   },{
     id: "IMACA32",
     bairro: "Visconde de Araújo",
-    operando: false
+    operando: true
   },{
     id: "IMACA36",
     bairro: "Córrego do Ouro",
@@ -62,19 +62,19 @@ const ESTACOES = [
   },{
     id: "IMACA41",
     bairro: "Lagomar",
-    operando: false
+    operando: true
   },{
     id: "IMACA42",
     bairro: "Virgem Santa",
-    operando: false
+    operando: true
   },{
     id: "IMACA43",
     bairro: "Aeroporto",
-    operando: false
+    operando: true
   },{
     id: "IMACA46",
     bairro: "Cajueiros",
-    operando: false
+    operando: true
   },{
     id: "IMACA52",
     bairro: "Barreto",

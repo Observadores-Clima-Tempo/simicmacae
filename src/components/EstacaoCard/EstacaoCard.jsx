@@ -40,6 +40,13 @@ export default function EstacaoCard({ stationId, children }) {
 
   if (!dadosEstacao) {
     console.warn("Dados indisponíveis para a estação:", stationId);
+    setDadosEstacao({
+      temperatura: null,
+      umidade: null,
+      indiceCalor: null,
+      categoria: "Estação Offline",
+      cor: "#7f8c8d",
+    });
     return null;
   }
 
@@ -58,7 +65,7 @@ export default function EstacaoCard({ stationId, children }) {
         </div>
 
         <GaugeComponent
-          value={dadosEstacao.indiceCalor}
+          value={dadosEstacao.indiceCalor || 0}
           type="semicircle"
           minValue={16}
           maxValue={65}
