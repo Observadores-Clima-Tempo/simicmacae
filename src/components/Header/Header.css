@@ -26,3 +26,57 @@
         margin-left: 20px;
     }
 }
+
+@media (min-width: 768px) {
+    .header-app {
+        grid-column: 1 / 5;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        background-color: #0e4d6f;
+        height: 64px;
+        border-radius: 12px;
+        padding: 0 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+    }
+
+    .titulo-app {
+        font-size: 26px;
+        color: #d9e3e7;
+        flex: 1;
+        text-align: left;
+    }
+
+    .logo-termometro {
+        width: auto;
+        height: 80%;
+        margin-right: 12px;
+        margin-left: 0;
+    }
+
+    .menu-navegacao {
+        display: flex;
+        gap: 8px;
+    }
+
+    .menu-navegacao button {
+        background: transparent;
+        border: 1px solid #d9e3e7;
+        color: #d9e3e7;
+        padding: 6px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-family: 'Times New Roman', Times, Georgia, Garamond, serif;
+    }
+
+    .menu-navegacao button:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .menu-navegacao button:disabled {
+        background: rgba(255, 255, 255, 0.25);
+        cursor: default;
+    }
+}

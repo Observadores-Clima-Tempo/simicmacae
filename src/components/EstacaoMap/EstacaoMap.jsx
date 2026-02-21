@@ -71,7 +71,7 @@ export default function EstacaoMap({ stationId, children }) {
 
   return (
     <div className="estacao-map-container">
-      <h2>Mapa das Estações</h2>
+      <h2 className="estacao-map-titulo">Localização da Estação</h2>
       <MapContainer
         center={posicao ?? CENTRO_MACAE_PADRAO}
         zoom={15}

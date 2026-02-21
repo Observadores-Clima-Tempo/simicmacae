@@ -58,12 +58,11 @@ export default function EstacaoChart({ stationId, children }) {
   }, [stationId]);
 
   if (loading) return <p>Carregando gráfico...</p>;
-  if (chartData.length === 0) return <p>Sem dados disponíveis.</p>;
 
   // --- LÓGICA DINÂMICA DO EIXO X (PARANDO NO ÚLTIMO REGISTRO) ---
 
-  // 1. O domínio máximo é exatamente o valor do último ponto
-  const maxDomain = chartData[chartData.length - 1].timeValue;
+  // 1. O domínio máximo é exatamente o valor do último ponto (ou 1440 se sem dados)
+  const maxDomain = chartData.length > 0 ? chartData[chartData.length - 1].timeValue : 1440;
 
   // 2. Geramos os ticks de hora em hora (0, 60, 120...) que cabem no domínio
   const ticks = Array.from(
@@ -77,8 +76,8 @@ export default function EstacaoChart({ stationId, children }) {
         Sensação Térmica ao Longo do Dia - {children}
       </h3>
       
-      {/* Adicionei ResponsiveContainer para melhor comportamento em telas diferentes */}
-      <ResponsiveContainer width="100%" aspect={4}>
+      {/* ResponsiveContainer preenche 100% da altura disponível na célula do grid */}
+      <ResponsiveContainer width="100%" height="100%" style={{ flex: 1, minHeight: 0 }}>
         <LineChart
           data={chartData}
           margin={{ top: 20, right: 30, bottom: 5, left: 0 }}
@@ -148,11 +147,9 @@ export default function EstacaoChart({ stationId, children }) {
             stroke="purple"
             dot={false}
             strokeWidth={3}
-            name="Sensação Térmica"
             animationDuration={1500}
             connectNulls
           />
-          <Legend verticalAlign="top" align="right" height={36} />
         </LineChart>
       </ResponsiveContainer>
     </div>
