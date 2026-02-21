@@ -27,6 +27,12 @@ export default function EstacaoCard({ stationId, children }) {
     return null;
   }
 
+  const offline = !dadosEstacao.indiceCalor;
+
+  const coresSubArcs = offline
+    ? ["#b0b0b0", "#959595", "#7a7a7a", "#606060", "#444444"]
+    : ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#8e44ad"];
+
   return (
     <div className="estacao-card-container">
       <h3 className="estacao-card-bairro">{children}</h3>
@@ -53,29 +59,29 @@ export default function EstacaoCard({ stationId, children }) {
             subArcs: [
               {
                 limit: 27,
-                color: "#2ecc71",
+                color: coresSubArcs[0],
                 showTick: true,
                 tooltip: { text: "Normal" },
               },
               {
                 limit: 32,
-                color: "#f1c40f",
+                color: coresSubArcs[1],
                 showTick: true,
                 tooltip: { text: "Cuidado" },
               },
               {
                 limit: 41,
-                color: "#e67e22",
+                color: coresSubArcs[2],
                 showTick: true,
                 tooltip: { text: "Cuidado Extremo" },
               },
               {
                 limit: 54,
-                color: "#e74c3c",
+                color: coresSubArcs[3],
                 showTick: true,
                 tooltip: { text: "Perigo" },
               },
-              { color: "#8e44ad", tooltip: { text: "Perigo Extremo" } },
+              { color: coresSubArcs[4], tooltip: { text: "Perigo Extremo" } },
             ],
           }}
           pointer={{
