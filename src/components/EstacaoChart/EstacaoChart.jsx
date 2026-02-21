@@ -15,7 +15,7 @@ import {
   getCategoriaIndiceCalor,
   calculateHeatIndex,
 } from "../../utils/heatIndexCalculator";
-import { buscarDadosDiariosEstacao } from "../../utils/buscarDados";
+import { buscarDadosDiariosEstacao, buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import "./EstacaoChart.css";
 
 // Converter horário "HH:MM" para minutos totais (ex: "16:20" => 980)
@@ -36,23 +36,40 @@ export default function EstacaoChart({ stationId, children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    buscarDadosDiariosEstacao(stationId)
-      .then((dados) => {
-        if (!dados || dados.length === 0) {
-          setChartData([]);
-          return;
-        }
-        const processado = dados.map((d) => {
-          const { indiceCalor } = calculateHeatIndex(
-            Number(d.temperatura),
-            Number(d.umidade),
-          );
-          return {
-            time: d.hora.slice(0, 5),
-            hi: Number(indiceCalor),
-            timeValue: timeToMinutes(d.hora),
+    Promise.all([
+      buscarDadosDiariosEstacao(stationId),
+      buscarDadosInstantaneosEstacao(stationId),
+    ])
+      .then(([dados, instantaneo]) => {
+        const processado =
+          dados && dados.length > 0
+            ? dados.map((d) => {
+                const { indiceCalor } = calculateHeatIndex(
+                  Number(d.temperatura),
+                  Number(d.umidade),
+                );
+                return {
+                  time: d.hora.slice(0, 5),
+                  hi: Number(indiceCalor),
+                  timeValue: timeToMinutes(d.hora),
+                };
+              })
+            : [];
+
+        if (instantaneo?.indiceCalor) {
+          const agora = new Date();
+          const horaAtual = `${agora.getHours().toString().padStart(2, "0")}:${agora.getMinutes().toString().padStart(2, "0")}`;
+          const ultimoPonto = {
+            time: horaAtual,
+            hi: Number(instantaneo.indiceCalor),
+            timeValue: timeToMinutes(horaAtual),
           };
-        });
+          const ultimo = processado[processado.length - 1];
+          if (!ultimo || ultimo.timeValue !== ultimoPonto.timeValue) {
+            processado.push(ultimoPonto);
+          }
+        }
+
         setChartData(processado);
       })
       .finally(() => setLoading(false));
