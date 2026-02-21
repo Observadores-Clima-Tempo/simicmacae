@@ -3,7 +3,7 @@ import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import { GaugeComponent } from "react-gauge-component";
 import "./EstacaoCard.css";
 
-export default function EstacaoCard({ stationId, children }) {
+export default function EstacaoCard({ stationId, children, mostrarGauge = true }) {
   const [dadosEstacao, setDadosEstacao] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -115,6 +115,7 @@ export default function EstacaoCard({ stationId, children }) {
             },
           }}
           className="gauge-estacao"
+          style={mostrarGauge ? undefined : { display: "none" }}
         />
       </div>
 

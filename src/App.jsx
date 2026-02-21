@@ -22,7 +22,7 @@ function App() {
       case "estacoes":
         return (
           <>
-            <EstacaoCardList />
+            <EstacaoCardList mostrarGauge={false} />
           </>
         );
       case "sobre":
