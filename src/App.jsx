@@ -7,6 +7,7 @@ import EstacaoCard from "./components/EstacaoCard/EstacaoCard";
 import { catalogoEstacoes } from "./data/estacoes";
 import Cortina from "./components/Cortina/Cortina";
 import EstacaoChart from "./components/EstacaoChart/EstacaoChart";
+import EstacaoMap from "./components/EstacaoMap/EstacaoMap";
 
 function App() {
   const [estacaoSelecionadaInfo, setEstacaoSelecionadaInfo] = useState(() =>
@@ -44,6 +45,9 @@ function App() {
             <EstacaoChart stationId={estacaoSelecionadaInfo.id}>
               {estacaoSelecionadaInfo.bairro}
             </EstacaoChart>
+            <EstacaoMap stationId={estacaoSelecionadaInfo.id}>
+              {estacaoSelecionadaInfo.bairro}
+            </EstacaoMap>
           </>
         );
     }

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   CartesianGrid,
   Legend,
@@ -7,126 +8,153 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  ResponsiveContainer
 } from "recharts";
 import { categoriasIndiceCalor } from "../../data/heatIndex";
-import { getCategoriaIndiceCalor } from "../../utils/heatIndexCalculator";
+import {
+  getCategoriaIndiceCalor,
+  calculateHeatIndex,
+} from "../../utils/heatIndexCalculator";
+import { buscarDadosDiariosEstacao } from "../../utils/buscarDados";
+import "./EstacaoChart.css";
 
-// #region Sample data
-const data = [
-  { time: "00:00", hi: 27 },
-  { time: "00:15", hi: 27 },
-  { time: "00:30", hi: 27 },
-  { time: "00:45", hi: 27 },
-  { time: "01:00", hi: 27 },
-  { time: "01:15", hi: 27 },
-  { time: "01:45", hi: 27 },
-  { time: "02:00", hi: 27 },
-  { time: "02:15", hi: 27 },
-  { time: "04:15", hi: 27 },
-  { time: "04:38", hi: 29 },
-  { time: "08:00", hi: 30 },
-  { time: "12:00", hi: 35 },
-  { time: "16:00", hi: 42 },
-  { time: "20:00", hi: 33 },
-];
-// 1. Helper para converter "HH:mm" em minutos totais do dia
 const timeToMinutes = (timeStr) => {
   const [h, m] = timeStr.split(":").map(Number);
   return h * 60 + m;
 };
 
-// 2. Helper para formatar o número de volta para "HH:00" na legenda
+// Modificado para mostrar minutos reais (importante para o Tooltip)
 const minutesToLabel = (min) => {
   const h = Math.floor(min / 60);
-  return `${h.toString().padStart(2, "0")}:00`;
+  const m = min % 60;
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
 };
 
 export default function EstacaoChart({ stationId, children }) {
-  // Preparamos os dados para o formato numérico
-  const chartData = data.map((d) => ({
-    ...d,
-    timeValue: timeToMinutes(d.time),
-  }));
+  const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Geramos os ticks para cada hora (0, 60, 120... até 1440)
-  const ticks = Array.from({ length: 25 }, (_, i) => i * 60);
+  useEffect(() => {
+    buscarDadosDiariosEstacao(stationId)
+      .then((dados) => {
+        if (!dados || dados.length === 0) {
+          setChartData([]);
+          return;
+        }
+        const processado = dados.map((d) => {
+          const { indiceCalor } = calculateHeatIndex(
+            Number(d.temperatura),
+            Number(d.umidade),
+          );
+          return {
+            time: d.hora.slice(0, 5),
+            hi: Number(indiceCalor),
+            timeValue: timeToMinutes(d.hora),
+          };
+        });
+        setChartData(processado);
+      })
+      .finally(() => setLoading(false));
+  }, [stationId]);
+
+  if (loading) return <p>Carregando gráfico...</p>;
+  if (chartData.length === 0) return <p>Sem dados disponíveis.</p>;
+
+  // --- LÓGICA DINÂMICA DO EIXO X (PARANDO NO ÚLTIMO REGISTRO) ---
+
+  // 1. O domínio máximo é exatamente o valor do último ponto
+  const maxDomain = chartData[chartData.length - 1].timeValue;
+
+  // 2. Geramos os ticks de hora em hora (0, 60, 120...) que cabem no domínio
+  const ticks = Array.from(
+    { length: Math.floor(maxDomain / 60) + 1 },
+    (_, i) => i * 60,
+  );
 
   return (
-    <LineChart
-      style={{ width: "100%", aspectRatio: 4, maxWidth: 1200 }}
-      responsive
-      data={chartData}
-      margin={{
-        top: 20,
-        right: 20,
-        bottom: 5,
-        left: 0,
-      }}
-    >
-      <CartesianGrid stroke="#aaa" strokeDasharray="3 3" />
-      {categoriasIndiceCalor.map(({ categoria, classe, cor, intervalo }) => (
-        <ReferenceArea
-          key={classe}
-          y1={intervalo.min === -Infinity ? 16 : intervalo.min}
-          y2={intervalo.max === Infinity ? 65 : intervalo.max}
-          fill={cor}
-          fillOpacity={0.25}
-          label={{
-            value: categoria,
-            position: "insideTopLeft",
-            fontSize: 14,
-            fill: cor,
-          }}
-        />
-      ))}
+    <div className="estacao-chart-container">
+      <h3 className="estacao-chart-title">
+        Sensação Térmica ao Longo do Dia - {children}
+      </h3>
+      
+      {/* Adicionei ResponsiveContainer para melhor comportamento em telas diferentes */}
+      <ResponsiveContainer width="100%" aspect={4}>
+        <LineChart
+          data={chartData}
+          margin={{ top: 20, right: 30, bottom: 5, left: 0 }}
+        >
+          <CartesianGrid stroke="#aaa" strokeDasharray="3 3" vertical={false} />
 
-      <Line
-        type="monotone"
-        dataKey="hi"
-        stroke="purple"
-        dot={false}
-        connectNulls
-        name="Sensação Térmica"
-        strokeWidth={2}
-      />
+          {categoriasIndiceCalor.map(({ categoria, classe, cor, intervalo }) => (
+            <ReferenceArea
+              key={classe}
+              y1={intervalo.min === -Infinity ? 16 : intervalo.min}
+              y2={intervalo.max === Infinity ? 65 : intervalo.max}
+              fill={cor}
+              fillOpacity={0.25}
+            />
+          ))}
 
-      <XAxis
-        dataKey="timeValue"
-        type="number"
-        interval={0}
-        tick={{ fontSize: 12, fill: "#666" }}
-        ticks={ticks}
-        tickFormatter={minutesToLabel}
-        domain = {[0, 1440]}
-      />
+          <XAxis
+            dataKey="timeValue"
+            type="number"
+            ticks={ticks}
+            tickFormatter={minutesToLabel}
+            domain={[0, maxDomain]} // Agora termina exatamente no último dado
+            interval={0}
+            tick={{ fontSize: 12, fill: "#666" }}
+          />
 
-      <YAxis
-        domain={[16, 65]}
-        label={{
-        //   value: "Sensação Térmica",
-          position: "insideLeft",
-          angle: -90,
-        }}
-        tick={{ fontSize: 12, fill: "#666" }}
-        interval={0}
-        allowDecimals={false}
-        tickCount={8}
+          <YAxis
+            domain={[16, 65]}
+            tickCount={8}
+            interval={0}
+            tick={{ fontSize: 12, fill: "#666" }}
+            allowDecimals={false}
+          />
 
-      />
-      <Legend align="right" />
-      <Tooltip
-        content={({ active, payload }) => {
-          if (!active || !payload?.length) return null;
-          const valor = payload[0].value;
-          const { categoria, cor } = getCategoriaIndiceCalor(valor);
-          return (
-            <div style={{ background: "#fff", border: "1px solid #ccc", padding: "8px 12px", borderRadius: 4 }}>
-              <p style={{ margin: 0, fontWeight: "bold" }}>Sensação Térmica: {valor}°C</p>
-              <p style={{ margin: 0, color: cor }}>{categoria}</p>
-            </div>
-          );
-        }}
-      />
-    </LineChart>
+          <Tooltip
+            content={({ active, payload, label }) => {
+              if (!active || !payload?.length) return null;
+              const valor = payload[0].value;
+              const { categoria, cor } = getCategoriaIndiceCalor(valor);
+              return (
+                <div
+                  style={{
+                    background: "#fff",
+                    border: `2px solid ${cor}`,
+                    padding: "8px 12px",
+                    borderRadius: 8,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
+                    {minutesToLabel(label)} {/* Mostrará ex: 16:20 */}
+                  </p>
+                  <p style={{ margin: "4px 0", fontWeight: "bold", fontSize: "16px" }}>
+                    {valor.toFixed(1)}°C
+                  </p>
+                  <p style={{ margin: 0, color: cor, fontWeight: "bold", fontSize: "14px" }}>
+                    {categoria}
+                  </p>
+                </div>
+              );
+            }}
+          />
+
+          <Line
+            type="monotone"
+            dataKey="hi"
+            stroke="purple"
+            dot={false}
+            strokeWidth={3}
+            name="Sensação Térmica"
+            animationDuration={1500}
+            connectNulls
+          />
+          <Legend verticalAlign="top" align="right" height={36} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
