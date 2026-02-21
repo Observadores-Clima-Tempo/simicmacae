@@ -61,22 +61,29 @@
     }
 
     .menu-navegacao button {
-        background: transparent;
-        border: 1px solid #d9e3e7;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1.5px solid rgba(217, 227, 231, 0.6);
         color: #d9e3e7;
-        padding: 6px 16px;
-        border-radius: 8px;
+        padding: 8px 20px;
+        border-radius: 20px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 15px;
         font-family: 'Times New Roman', Times, Georgia, Garamond, serif;
+        letter-spacing: 0.4px;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
 
     .menu-navegacao button:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.22);
+        border-color: #d9e3e7;
+        color: #ffffff;
     }
 
     .menu-navegacao button:disabled {
-        background: rgba(255, 255, 255, 0.25);
+        background: #d9e3e7;
+        border-color: #d9e3e7;
+        color: #0e4d6f;
+        font-weight: bold;
         cursor: default;
     }
 }
