@@ -8,7 +8,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
 import { categoriasIndiceCalor } from "../../data/heatIndex";
 import {
@@ -18,12 +18,13 @@ import {
 import { buscarDadosDiariosEstacao } from "../../utils/buscarDados";
 import "./EstacaoChart.css";
 
+// Converter horário "HH:MM" para minutos totais (ex: "16:20" => 980)
 const timeToMinutes = (timeStr) => {
   const [h, m] = timeStr.split(":").map(Number);
   return h * 60 + m;
 };
 
-// Modificado para mostrar minutos reais (importante para o Tooltip)
+// Converter minutos de volta para formato HH:MM
 const minutesToLabel = (min) => {
   const h = Math.floor(min / 60);
   const m = min % 60;
@@ -59,12 +60,11 @@ export default function EstacaoChart({ stationId, children }) {
 
   if (loading) return <p>Carregando gráfico...</p>;
 
-  // --- LÓGICA DINÂMICA DO EIXO X (PARANDO NO ÚLTIMO REGISTRO) ---
+  // domínio máximo é o valor do último ponto
+  const maxDomain =
+    chartData.length > 0 ? chartData[chartData.length - 1].timeValue : 1440;
 
-  // 1. O domínio máximo é exatamente o valor do último ponto (ou 1440 se sem dados)
-  const maxDomain = chartData.length > 0 ? chartData[chartData.length - 1].timeValue : 1440;
-
-  // 2. Geramos os ticks de hora em hora (0, 60, 120...) que cabem no domínio
+  // Gerar ticks a cada 60 minutos (1 hora) até o máximo do domínio
   const ticks = Array.from(
     { length: Math.floor(maxDomain / 60) + 1 },
     (_, i) => i * 60,
@@ -75,24 +75,30 @@ export default function EstacaoChart({ stationId, children }) {
       <h3 className="estacao-chart-title">
         Sensação Térmica ao Longo do Dia - {children}
       </h3>
-      
+
       {/* ResponsiveContainer preenche 100% da altura disponível na célula do grid */}
-      <ResponsiveContainer width="100%" height="100%" style={{ flex: 1, minHeight: 0 }}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        style={{ flex: 1, minHeight: 0 }}
+      >
         <LineChart
           data={chartData}
           margin={{ top: 20, right: 30, bottom: 5, left: 0 }}
         >
           <CartesianGrid stroke="#aaa" strokeDasharray="3 3" vertical={false} />
 
-          {categoriasIndiceCalor.map(({ categoria, classe, cor, intervalo }) => (
-            <ReferenceArea
-              key={classe}
-              y1={intervalo.min === -Infinity ? 16 : intervalo.min}
-              y2={intervalo.max === Infinity ? 65 : intervalo.max}
-              fill={cor}
-              fillOpacity={0.25}
-            />
-          ))}
+          {categoriasIndiceCalor.map(
+            ({ categoria, classe, cor, intervalo }) => (
+              <ReferenceArea
+                key={classe}
+                y1={intervalo.min === -Infinity ? 16 : intervalo.min}
+                y2={intervalo.max === Infinity ? 65 : intervalo.max}
+                fill={cor}
+                fillOpacity={0.25}
+              />
+            ),
+          )}
 
           <XAxis
             dataKey="timeValue"
@@ -130,10 +136,23 @@ export default function EstacaoChart({ stationId, children }) {
                   <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
                     {minutesToLabel(label)} {/* Mostrará ex: 16:20 */}
                   </p>
-                  <p style={{ margin: "4px 0", fontWeight: "bold", fontSize: "16px" }}>
+                  <p
+                    style={{
+                      margin: "4px 0",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                    }}
+                  >
                     {valor.toFixed(1)}°C
                   </p>
-                  <p style={{ margin: 0, color: cor, fontWeight: "bold", fontSize: "14px" }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: cor,
+                      fontWeight: "bold",
+                      fontSize: "14px",
+                    }}
+                  >
                     {categoria}
                   </p>
                 </div>
