@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "leaflet": "^1.9.4",
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1",
     "react-gauge-component": "^2.0.23",
+    "react-leaflet": "^5.0.0-rc.2",
     "recharts": "^3.7.0"
   },
   "devDependencies": {

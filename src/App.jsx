@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import 'leaflet/dist/leaflet.css';
 import Header from "./components/Header/Header";
 import EstacaoMenu from "./components/EstacaoMenu/EstacaoMenu";
 import EstacaoCardList from "./components/EstacaoCardList/EstacaoCardList";

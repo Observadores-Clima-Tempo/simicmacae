@@ -81,11 +81,13 @@ function formatarDadoInstantaneo(dados) {
       observation.humidity > 100;
 
     if (semDadosValidos || dadosInvalidos) {
-      return { temperatura: null, umidade: null };
+      return { temperatura: null, umidade: null , lat: null, lon: null};
     }
     return {
       temperatura: observation.metric.temp.toFixed(1),
       umidade: observation.humidity,
+      lat: observation.lat,
+      lon: observation.lon,
     };
   }
 }
