@@ -11,23 +11,25 @@ import {
 
 const CENTRO_MACAE_PADRAO = [-22.407436, -41.845993];
 
-function RecentralizarMapa({ posicao }) {
+function RecentralizarMapa({ posicao, zoom }) {
   const map = useMap();
   useEffect(() => {
-    map.flyTo(posicao ?? CENTRO_MACAE_PADRAO);
-  }, [posicao, map]);
+    map.flyTo(posicao ?? CENTRO_MACAE_PADRAO, zoom);
+  }, [posicao, zoom, map]);
   return null;
 }
 
 export default function EstacaoMap({ stationId, children }) {
   const [posicao, setPosicao] = useState(null);
   const [corCategoria, setCorCategoria] = useState("#2ecc71");
+  const [zoom, setZoom] = useState(12);
 
   useEffect(() => {
     if (!stationId) return;
     buscarDadosInstantaneosEstacao(stationId).then((dados) => {
       if (dados?.lat && dados?.lon) {
         setPosicao([dados.lat, dados.lon]);
+        setZoom(15);
         if (dados.temperatura && dados.umidade) {
           const { indiceCalor } = calculateHeatIndex(
             Number(dados.temperatura),
@@ -38,6 +40,7 @@ export default function EstacaoMap({ stationId, children }) {
         }
       } else {
         setPosicao(null);
+        setZoom(12);
       }
     });
   }, [stationId]);
@@ -74,7 +77,7 @@ export default function EstacaoMap({ stationId, children }) {
       <h2 className="estacao-map-titulo">Localização da Estação</h2>
       <MapContainer
         center={posicao ?? CENTRO_MACAE_PADRAO}
-        zoom={15}
+        zoom={zoom}
         scrollWheelZoom={false}
         doubleClickZoom={false}
         zoomControl={false}
@@ -89,7 +92,7 @@ export default function EstacaoMap({ stationId, children }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <RecentralizarMapa posicao={posicao} />
+        <RecentralizarMapa posicao={posicao} zoom={zoom} />
         {posicao && (
           <Marker position={posicao} icon={iconeColorido}>
             <Popup>

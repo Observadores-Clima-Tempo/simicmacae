@@ -11,6 +11,7 @@ export default function EstacaoMenu({ estacaoSelecionada }) {
           {catalogoEstacoes.getEstacoesAtivas().map((estacao) => (
             <EstacaoBotao
               key={estacao.id}
+              stationId={estacao.id}
               funcaoClick={() => estacaoSelecionada(estacao)}
             >
               {estacao.bairro}
