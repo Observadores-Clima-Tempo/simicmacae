@@ -10,6 +10,8 @@ export const calculateHeatIndex = (temperaturaC, umidadeRelativa) => {
   // Celsius para Fahrenheit
   const temperaturaF = (temperaturaC * 9) / 5 + 32;
 
+  // Justificativa para os ajustes pode ser encontrada em: https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml#HIadjustments
+
   // Se a temperatura for menor que 80°F (aprox. 26.7°C),
   // o índice de calor é igual à própria temperatura.
   if (temperaturaF < 80) {
@@ -40,10 +42,21 @@ export const calculateHeatIndex = (temperaturaC, umidadeRelativa) => {
       Math.sqrt((17 - Math.abs(temperaturaF - 95)) / 17);
     indiceCalorF -= ajuste;
   }
+
   // Ajuste 2: Se umidade > 85% e temp entre 80 e 87°F
   else if (umidadeRelativa > 85 && temperaturaF >= 80 && temperaturaF <= 87) {
     const ajuste = ((umidadeRelativa - 85) / 10) * ((87 - temperaturaF) / 5);
     indiceCalorF += ajuste;
+  }
+
+  // Se o Indice de Calor for menor que 80°F, utiliza o modelo simplificado
+  if (indiceCalorF < 80) {
+    indiceCalorF =
+      0.5 *
+      (temperaturaF +
+        61.0 +
+        ((temperaturaF - 68.0) * 1.2) +
+        (umidadeRelativa * 0.094));
   }
 
   // Converte o resultado de volta para Celsius
@@ -58,9 +71,11 @@ export const calculateHeatIndex = (temperaturaC, umidadeRelativa) => {
  */
 export const getCategoriaIndiceCalor = (indiceCalorC) => {
   const encontrada = categoriasIndiceCalor.find(
-    ({ intervalo }) => indiceCalorC >= intervalo.min && indiceCalorC < intervalo.max,
+    ({ intervalo }) =>
+      indiceCalorC >= intervalo.min && indiceCalorC < intervalo.max,
   );
-  if (!encontrada) return categoriasIndiceCalor[categoriasIndiceCalor.length - 1];
+  if (!encontrada)
+    return categoriasIndiceCalor[categoriasIndiceCalor.length - 1];
   const { categoria, classe, cor } = encontrada;
   return { categoria, classe, cor };
 };

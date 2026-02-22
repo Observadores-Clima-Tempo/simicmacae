@@ -33,9 +33,16 @@ export default function Sobre() {
         </li>
         <li>
           <strong>Processamento Científico:</strong> O cálculo da sensação
-          térmica segue a equação empírica da{" "}
-          <em>National Weather Service (NOAA)</em>, garantindo precisão técnica
-          na classificação do estresse térmico.
+          térmica segue a{" "}
+          <a
+            href="https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            equação empírica
+          </a>{" "}
+          da <em>National Weather Service (NOAA)</em>, garantindo precisão
+          técnica na classificação do estresse térmico.
         </li>
         <li>
           <strong>Interface Interativa:</strong> Desenvolvido como uma{" "}
