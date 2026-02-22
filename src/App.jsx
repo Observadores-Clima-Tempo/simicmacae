@@ -30,7 +30,7 @@ function App() {
           <main id="sobre-o-projeto">
             <h2>Sobre o Projeto</h2>
             <p>
-              O site <strong>SIMIC-Macaé</strong> é uma
+              O site <strong>SIM-IC Macaé</strong> é uma
               aplicação tecnológica voltada para o monitoramento da sensação
               térmica no município de Macaé-RJ. Esta iniciativa
               busca aproximar o conhecimento científico gerado na universidade
@@ -41,6 +41,13 @@ function App() {
             <hr />
 
             <h3>Nossa Missão</h3>
+            <p>
+            A nossa missão é promover a aproximação entre as pesquisas acadêmicas da 
+            <strong>UENF</strong> e a população de Macaé e região. Buscamos transformar 
+            dados meteorológicos complexos em informações acessíveis e operacionais, 
+            permitindo que cidadãos, gestores públicos e empresas compreendam e gerenciem 
+            melhor os impactos do clima em suas atividades diárias.
+            </p>
             <p>
               O foco principal é a análise do{" "}
               <strong>Índice de Calor (IC)</strong>, uma ferramenta crucial em
