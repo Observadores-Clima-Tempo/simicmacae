@@ -42,17 +42,11 @@ function App() {
 
             <h3>Nossa Missão</h3>
             <p>
-            A nossa missão é promover a aproximação entre as pesquisas acadêmicas da 
+            A nossa missão é promover a aproximação entre as pesquisas acadêmicas da{" "}
             <strong>UENF</strong> e a população de Macaé e região. Buscamos transformar 
             dados meteorológicos complexos em informações acessíveis e operacionais, 
             permitindo que cidadãos, gestores públicos e empresas compreendam e gerenciem 
             melhor os impactos do clima em suas atividades diárias.
-            </p>
-            <p>
-              O foco principal é a análise do{" "}
-              <strong>Índice de Calor (IC)</strong>, uma ferramenta crucial em
-              regiões tropicais úmidas como Macaé, onde a alta umidade
-              potencializa o desconforto térmico e os impactos à saúde.
             </p>
 
             <h3>Como Funciona</h3>
