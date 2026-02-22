@@ -23,7 +23,7 @@ function App() {
   // Atualiza os dados de todas as estações a cada 10 minutos, forçando a atualização dos componentes dependentes
   useEffect(() => {
     const intervalo = setInterval(() => {
-      weatherCache.clearAll();
+      //weatherCache.clearAll();
       setRefreshKey((k) => k + 1);
     }, constantes.INTERVALO_ATUALIZACAO);
     return () => clearInterval(intervalo);
