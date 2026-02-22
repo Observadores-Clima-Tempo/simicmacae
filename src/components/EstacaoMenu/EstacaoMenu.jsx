@@ -4,7 +4,7 @@ import { catalogoEstacoes } from "../../data/estacoes";
 import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import "./EstacaoMenu.css";
 
-export default function EstacaoMenu({ estacaoSelecionada }) {
+export default function EstacaoMenu({ estacaoSelecionada, refreshKey }) {
   const [estacoesOrdenadas, setEstacoesOrdenadas] = useState(
     catalogoEstacoes.getEstacoesAtivas()
   );
@@ -24,7 +24,7 @@ export default function EstacaoMenu({ estacaoSelecionada }) {
         .map((r) => r.estacao);
       setEstacoesOrdenadas(ordenadas);
     });
-  }, []);
+  }, [refreshKey]);
 
   return (
     <>
@@ -36,6 +36,7 @@ export default function EstacaoMenu({ estacaoSelecionada }) {
               key={estacao.id}
               stationId={estacao.id}
               funcaoClick={() => estacaoSelecionada(estacao)}
+              refreshKey={refreshKey}
             >
               {estacao.bairro}
             </EstacaoBotao>

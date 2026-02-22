@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import "./EstacaoBotao.css";
 
-export default function EstacaoBotao({ children, stationId, funcaoClick }) {
+export default function EstacaoBotao({ children, stationId, funcaoClick, refreshKey }) {
   const [corCategoria, setCorCategoria] = useState(null);
 
   useEffect(() => {
@@ -10,7 +10,7 @@ export default function EstacaoBotao({ children, stationId, funcaoClick }) {
     buscarDadosInstantaneosEstacao(stationId).then((dados) => {
       if (dados?.cor) setCorCategoria(dados.cor);
     });
-  }, [stationId]);
+  }, [stationId, refreshKey]);
 
   return (
     <button className="estacao-botao-menu" onClick={funcaoClick}>

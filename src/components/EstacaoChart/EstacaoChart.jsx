@@ -31,7 +31,7 @@ const minutesToLabel = (min) => {
   return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
 };
 
-export default function EstacaoChart({ stationId, children }) {
+export default function EstacaoChart({ stationId, children, refreshKey }) {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,7 +73,7 @@ export default function EstacaoChart({ stationId, children }) {
         setChartData(processado);
       })
       .finally(() => setLoading(false));
-  }, [stationId]);
+  }, [stationId, refreshKey]);
 
   if (loading) return <p>Carregando gráfico...</p>;
 

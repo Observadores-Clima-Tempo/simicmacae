@@ -4,7 +4,7 @@ import { catalogoEstacoes } from "../../data/estacoes";
 import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import "./EstacaoCardList.css";
 
-export default function EstacaoCardList({ mostrarGauge = true }) {
+export default function EstacaoCardList({ mostrarGauge = true, refreshKey }) {
   const [estacoesOrdenadas, setEstacoesOrdenadas] = useState(
     catalogoEstacoes.getEstacoesAtivas()
   );
@@ -24,7 +24,7 @@ export default function EstacaoCardList({ mostrarGauge = true }) {
         .map((r) => r.estacao);
       setEstacoesOrdenadas(ordenadas);
     });
-  }, []);
+  }, [refreshKey]);
 
   return (
     <div className="estacao-card-list-wrapper">

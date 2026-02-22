@@ -3,7 +3,7 @@ import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import { GaugeComponent } from "react-gauge-component";
 import "./EstacaoCard.css";
 
-export default function EstacaoCard({ stationId, children, mostrarGauge = true }) {
+export default function EstacaoCard({ stationId, children, mostrarGauge = true, refreshKey }) {
   const [dadosEstacao, setDadosEstacao] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -11,7 +11,7 @@ export default function EstacaoCard({ stationId, children, mostrarGauge = true }
     buscarDadosInstantaneosEstacao(stationId)
       .then((dados) => setDadosEstacao(dados))
       .finally(() => setLoading(false));
-  }, [stationId]);
+  }, [stationId, refreshKey]);
 
   if (loading) return <p>Carregando dados de Macaé...</p>;
 

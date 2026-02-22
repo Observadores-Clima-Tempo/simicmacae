@@ -1,8 +1,8 @@
 import { weatherServiceAPI } from "./weatherServiceAPI";
+import * as constantes from "../data/constantes";
 
 const cache_instantaneo = {};
 const cache_diaria = {};
-const VALIDADE_DADOS = 15 * 60 * 1000; // 15 minutos
 
 export const weatherCache = {
   getLeituraInstantanea: async (stationId) => {
@@ -10,7 +10,7 @@ export const weatherCache = {
     const itemGuardado = cache_instantaneo[stationId];
 
     // Verifica se temos o dado e se ele ainda é válido
-    if (itemGuardado && agora - itemGuardado.timestamp < VALIDADE_DADOS) {
+    if (itemGuardado && agora - itemGuardado.timestamp < constantes.PRAZO_VALIDADE_DADOS_INSTANTANEOS) {
       return itemGuardado.dados;
     }
 
@@ -39,7 +39,7 @@ export const weatherCache = {
     const agora = Date.now();
     const itemGuardado = cache_diaria[stationId];
 
-    if (itemGuardado && agora - itemGuardado.timestamp < VALIDADE_DADOS) {
+    if (itemGuardado && agora - itemGuardado.timestamp < constantes.PRAZO_VALIDADE_DADOS_DIARIOS) {
       return itemGuardado.dados;
     }
 
@@ -59,6 +59,11 @@ export const weatherCache = {
       }
       throw error;
     }
+  },
+
+  clearAll: () => {
+    Object.keys(cache_instantaneo).forEach((k) => delete cache_instantaneo[k]);
+    Object.keys(cache_diaria).forEach((k) => delete cache_diaria[k]);
   },
 };
 
