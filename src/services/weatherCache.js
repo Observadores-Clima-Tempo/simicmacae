@@ -29,7 +29,13 @@ export const weatherCache = {
     } catch (error) {
       // Se a API falhar mas tivermos um dado antigo, retornar o antigo
       if (itemGuardado) {
-        return itemGuardado.dados;
+        if (agora - itemGuardado.timestamp < constantes.TEMPO_MAXIMO_DADOS_INSTANTANEOS) {
+          console.warn(`API falhou para estação ${stationId}, retornando dado antigo do cache.`);
+          return itemGuardado.dados;
+        } else {
+          console.warn(`API falhou para estação ${stationId} e o dado do cache está muito antigo. Não retornando dados.`);
+          return { temperatura: null, umidade: null , lat: null, lon: null}; 
+        }
       }
       throw error;
     }
