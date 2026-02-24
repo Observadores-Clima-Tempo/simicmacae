@@ -90,7 +90,7 @@ export default function EstacaoChart({ stationId, children, refreshKey }) {
   return (
     <div className="estacao-chart-container">
       <h3 className="estacao-chart-title">
-        Sensação Térmica ao Longo do Dia - {children}
+        Índice de Calor ao Longo do Dia - {children}
       </h3>
 
       {/* ResponsiveContainer preenche 100% da altura disponível na célula do grid */}
