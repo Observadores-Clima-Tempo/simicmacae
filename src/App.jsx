@@ -12,6 +12,7 @@ import EstacaoMap from "./components/EstacaoMap/EstacaoMap";
 import Sobre from "./components/Sobre/Sobre";
 import { weatherCache } from "./services/weatherCache";
 import * as constantes from "./data/constantes";
+import { buscarDadosInstantaneosEstacao } from "./utils/buscarDados";
 
 function App() {
   const [estacaoSelecionadaInfo, setEstacaoSelecionadaInfo] = useState(() =>
@@ -19,6 +20,27 @@ function App() {
   );
   const [menuSelecionado, setMenuSelecionado] = useState("inicio");
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Seleciona a primeira estação com dados reais disponíveis na API
+  useEffect(() => {
+    const estacoes = catalogoEstacoes.getEstacoesAtivas();
+    Promise.all(
+      estacoes.map((estacao, index) =>
+        buscarDadosInstantaneosEstacao(estacao.id).then((dados) => ({
+          estacao,
+          index,
+          online: !!dados,
+        }))
+      )
+    ).then((resultados) => {
+      const primeiraOnline = resultados
+        .sort((a, b) => a.index - b.index)
+        .find((r) => r.online);
+      if (primeiraOnline) {
+        setEstacaoSelecionadaInfo(primeiraOnline.estacao);
+      }
+    });
+  }, []);
 
   // Atualiza os dados de todas as estações a cada 10 minutos, forçando a atualização dos componentes dependentes
   useEffect(() => {

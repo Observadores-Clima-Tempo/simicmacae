@@ -1,6 +1,7 @@
 @media (max-width: 767px) {
     .header-app {
         position: relative;
+        z-index: 500;
         margin-bottom: 0;
         border-bottom: 1.5px solid #d9e3e7;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
