@@ -6,6 +6,17 @@
   height: 100%;
 }
 
+@media (max-width: 767px) {
+  .App {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    padding-bottom: 24px;
+    box-sizing: border-box;
+  }
+}
+
 @media (min-width: 768px) {
   .App {
     display: grid;
@@ -22,7 +33,12 @@
 body {
   font-family:  'Times New Roman', Times, Georgia, Garamond, serif;
   background-color: #fafafa;
-  height: 100%;
+}
+
+@media (min-width: 768px) {
+  body {
+    height: 100%;
+  }
 }
 
 html {

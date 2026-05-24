@@ -1,48 +1,42 @@
 @media (max-width: 767px) {
   .container-menu-estacoes {
-    max-width: 380px;
-    height: 200px;
-    margin: auto;
+    width: 100%;
+    height: auto;
     border: 1px solid #d9e3e7;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    /* background: #fff; */
     background: #fafafa;
     box-sizing: border-box;
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
   }
 
   .titulo-selecao-estacao {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     color: #0e4d6f;
     margin: auto;
     padding-left: 15px;
-    height: 40px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: left;
   }
 
   .scroll-menu-estacoes {
-    display: none;
     width: auto;
-    height: 150px;
-    margin-left: 10px;
-    margin-right: 10px;
-    overflow-y: auto; /* Enables scrolling */
-    -webkit-overflow-scrolling: touch; /* Smooth momentum scroll (iOS) */
+    max-height: 150px;
+    margin: 0 10px 8px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     border: 1px solid #d9e3e7;
     border-radius: 8px;
-    /* background: #fff; */
     background: #fafafa;
-    padding: 10px;
-
+    padding: 6px;
     display: flex;
     flex-direction: column;
-    /* gap: 8px; */
     box-sizing: border-box;
-    touch-action: pan-y; /* Explicitly allow vertical dragging */
+    touch-action: pan-y;
   }
   /* 1. Define a largura da barra vertical */
   .scroll-menu-estacoes::-webkit-scrollbar {

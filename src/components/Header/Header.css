@@ -1,29 +1,87 @@
 @media (max-width: 767px) {
-    .menu-navegacao {
-        display: none;
-    }
     .header-app {
-        margin-bottom: 10px;
+        position: relative;
+        margin-bottom: 0;
         border-bottom: 1.5px solid #d9e3e7;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         height: 60px;
-        
         display: flex;
         justify-content: left;
         align-items: center;
-        background-color: #0e4d6f;        
+        background-color: #0e4d6f;
     }
+
     .titulo-app {
-        font-size: 20px;
-        text-align: center;
+        font-size: 18px;
+        text-align: left;
         color: #d9e3e7;
+        flex: 1;
     }
 
     .logo-termometro {
         width: auto;
         height: 75%;
         margin-right: 10px;
-        margin-left: 20px;
+        margin-left: 16px;
+    }
+
+    .btn-menu-mobile {
+        background: none;
+        border: none;
+        color: #d9e3e7;
+        font-size: 28px;
+        cursor: pointer;
+        padding: 4px 16px 4px 8px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .btn-menu-mobile:hover {
+        color: #ffffff;
+    }
+
+    .menu-navegacao {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: #0c3f5c;
+        flex-direction: column;
+        padding: 12px 16px;
+        gap: 8px;
+        z-index: 200;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .menu-navegacao.nav-aberta {
+        display: flex;
+    }
+
+    .menu-navegacao button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1.5px solid rgba(217, 227, 231, 0.5);
+        color: #d9e3e7;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 15px;
+        font-family: 'Times New Roman', Times, Georgia, Garamond, serif;
+        text-align: center;
+        transition: background 0.2s;
+    }
+
+    .menu-navegacao button:hover {
+        background: rgba(255, 255, 255, 0.22);
+        color: #ffffff;
+    }
+
+    .menu-navegacao button:disabled {
+        background: #d9e3e7;
+        border-color: #d9e3e7;
+        color: #0e4d6f;
+        font-weight: bold;
+        cursor: default;
     }
 }
 
@@ -53,6 +111,10 @@
         height: 80%;
         margin-right: 12px;
         margin-left: 0;
+    }
+
+    .btn-menu-mobile {
+        display: none;
     }
 
     .menu-navegacao {

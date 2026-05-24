@@ -1,6 +1,22 @@
 @media (max-width: 767px) {
     .estacao-chart-container {
-        display: none;
+        display: flex;
+        flex-direction: column;
+        height: 300px;
+        border: 1px solid #d9e3e7;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 8px 4px 8px;
+        background: #fafafa;
+        box-sizing: border-box;
+    }
+
+    .estacao-chart-title {
+        font-size: 16px;
+        color: #0e4d6f;
+        text-align: center;
+        margin-bottom: 4px;
+        flex-shrink: 0;
     }
 }
 
