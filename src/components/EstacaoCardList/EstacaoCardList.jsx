@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import EstacaoCard from "../EstacaoCard/EstacaoCard";
+import EstacaoMapGeral from "../EstacaoMapGeral/EstacaoMapGeral";
 import { catalogoEstacoes } from "../../data/estacoes";
 import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import "./EstacaoCardList.css";
 
 export default function EstacaoCardList({ mostrarGauge = true, refreshKey }) {
-  const [estacoesOrdenadas, setEstacoesOrdenadas] = useState(
-    catalogoEstacoes.getEstacoesAtivas()
-  );
+  const [estacoesOnline, setEstacoesOnline] = useState([]);
 
   useEffect(() => {
     const estacoes = catalogoEstacoes.getEstacoesAtivas();
@@ -19,18 +18,18 @@ export default function EstacaoCardList({ mostrarGauge = true, refreshKey }) {
         }))
       )
     ).then((resultados) => {
-      const ordenadas = resultados
-        .sort((a, b) => Number(b.online) - Number(a.online))
+      const online = resultados
+        .filter((r) => r.online)
         .map((r) => r.estacao);
-      setEstacoesOrdenadas(ordenadas);
+      setEstacoesOnline(online);
     });
   }, [refreshKey]);
 
   return (
     <div className="estacao-card-list-wrapper">
-      {/* <h2 className="estacao-card-list-titulo">Estações Ativas</h2> */}
+      <EstacaoMapGeral refreshKey={refreshKey} />
       <div className="estacao-card-list-container">
-        {estacoesOrdenadas.map((estacao) => (
+        {estacoesOnline.map((estacao) => (
           <EstacaoCard key={estacao.id + "_card"} stationId={estacao.id} mostrarGauge={mostrarGauge}>
             {estacao.bairro}
           </EstacaoCard>

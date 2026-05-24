@@ -1,9 +1,32 @@
+@media (max-width: 767px) {
+  .estacao-card-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .estacao-card-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .estacao-card-list-container .estacao-card-container {
+    width: 100%;
+    max-width: unset;
+  }
+}
+
 @media (min-width: 768px) {
   .estacao-card-list-wrapper {
     grid-column: 1 / -1;
     grid-row: 2 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     overflow-y: auto;
     min-height: 0;
+    padding: 0 4px 4px;
   }
 
   .estacao-card-list-titulo {
@@ -18,7 +41,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
-    padding: 0 16px 16px;
+    padding: 0 12px 16px;
     align-items: start;
     width: 100%;
     box-sizing: border-box;
