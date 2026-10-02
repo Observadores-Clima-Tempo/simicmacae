@@ -1,12 +1,21 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import EstacaoBotao from "../EstacaoBotao/EstacaoBotao";
 import { catalogoEstacoes } from "../../data/estacoes";
 import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
+import type { Estacao } from "../../types/domain";
 import "./EstacaoMenu.css";
 
-export default function EstacaoMenu({ estacaoSelecionada, refreshKey }) {
-  const [estacoesOrdenadas, setEstacoesOrdenadas] = useState(
-    catalogoEstacoes.getEstacoesAtivas()
+interface EstacaoMenuProps {
+  estacaoSelecionada: (estacao: Estacao) => void;
+  refreshKey?: number;
+}
+
+export default function EstacaoMenu({
+  estacaoSelecionada,
+  refreshKey,
+}: EstacaoMenuProps) {
+  const [estacoesOrdenadas, setEstacoesOrdenadas] = useState<Estacao[]>(
+    catalogoEstacoes.getEstacoesAtivas(),
   );
 
   useEffect(() => {
@@ -16,8 +25,8 @@ export default function EstacaoMenu({ estacaoSelecionada, refreshKey }) {
         buscarDadosInstantaneosEstacao(estacao.id).then((dados) => ({
           estacao,
           online: !!dados,
-        }))
-      )
+        })),
+      ),
     ).then((resultados) => {
       const ordenadas = resultados
         .sort((a, b) => Number(b.online) - Number(a.online))

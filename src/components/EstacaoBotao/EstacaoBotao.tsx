@@ -1,9 +1,22 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
 import "./EstacaoBotao.css";
 
-export default function EstacaoBotao({ children, stationId, funcaoClick, refreshKey }) {
-  const [corCategoria, setCorCategoria] = useState(null);
+interface EstacaoBotaoProps {
+  children: ReactNode;
+  stationId: string;
+  funcaoClick: () => void;
+  refreshKey?: number;
+}
+
+export default function EstacaoBotao({
+  children,
+  stationId,
+  funcaoClick,
+  refreshKey,
+}: EstacaoBotaoProps) {
+  const [corCategoria, setCorCategoria] = useState<string | null>(null);
 
   useEffect(() => {
     if (!stationId) return;

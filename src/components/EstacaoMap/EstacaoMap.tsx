@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
-import L from "leaflet";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import * as L from "leaflet";
+import type { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./EstacaoMap.css";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
@@ -9,9 +11,14 @@ import {
   getCategoriaIndiceCalor,
 } from "../../utils/heatIndexCalculator";
 
-const CENTRO_MACAE_PADRAO = [-22.407436, -41.845993];
+const CENTRO_MACAE_PADRAO: LatLngTuple = [-22.407436, -41.845993];
 
-function RecentralizarMapa({ posicao, zoom }) {
+interface RecentralizarMapaProps {
+  posicao: LatLngTuple | null;
+  zoom: number;
+}
+
+function RecentralizarMapa({ posicao, zoom }: RecentralizarMapaProps) {
   const map = useMap();
   useEffect(() => {
     map.flyTo(posicao ?? CENTRO_MACAE_PADRAO, zoom);
@@ -19,8 +26,13 @@ function RecentralizarMapa({ posicao, zoom }) {
   return null;
 }
 
-export default function EstacaoMap({ stationId, children }) {
-  const [posicao, setPosicao] = useState(null);
+interface EstacaoMapProps {
+  stationId: string;
+  children: ReactNode;
+}
+
+export default function EstacaoMap({ stationId, children }: EstacaoMapProps) {
+  const [posicao, setPosicao] = useState<LatLngTuple | null>(null);
   const [corCategoria, setCorCategoria] = useState("#2ecc71");
   const [zoom, setZoom] = useState(12);
 
@@ -81,7 +93,6 @@ export default function EstacaoMap({ stationId, children }) {
         scrollWheelZoom={false}
         doubleClickZoom={false}
         zoomControl={false}
-        interactive={false} 
         dragging={false}
         boxZoom={false}
         keyboard={false}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import L from "leaflet";
+import * as L from "leaflet";
+import type { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { catalogoEstacoes } from "../../data/estacoes";
@@ -8,12 +9,13 @@ import {
   calculateHeatIndex,
   getCategoriaIndiceCalor,
 } from "../../utils/heatIndexCalculator";
+import type { MarcadorMapa } from "../../types/domain";
 import "./EstacaoMapGeral.css";
 
-const CENTRO_MACAE = [-22.407436, -41.845993];
+const CENTRO_MACAE: LatLngTuple = [-22.407436, -41.845993];
 const ZOOM_INICIAL = 12;
 
-function criarIcone(cor, hi) {
+function criarIcone(cor: string, hi: string | null) {
   return L.divIcon({
     className: "",
     html: `<div style="
@@ -46,32 +48,40 @@ function criarIcone(cor, hi) {
   });
 }
 
-export default function EstacaoMapGeral({ refreshKey }) {
-  const [marcadores, setMarcadores] = useState([]);
+interface EstacaoMapGeralProps {
+  refreshKey?: number;
+}
+
+export default function EstacaoMapGeral({ refreshKey }: EstacaoMapGeralProps) {
+  const [marcadores, setMarcadores] = useState<MarcadorMapa[]>([]);
 
   useEffect(() => {
     const estacoes = catalogoEstacoes.getEstacoesAtivas();
     Promise.all(
       estacoes.map((estacao) =>
-        buscarDadosInstantaneosEstacao(estacao.id).then((dados) => {
-          if (!dados?.lat || !dados?.lon) return null;
-          let cor = "#7f8c8d";
-          let hi = null;
-          if (dados.temperatura && dados.umidade) {
-            const { indiceCalor } = calculateHeatIndex(
-              Number(dados.temperatura),
-              Number(dados.umidade),
-            );
-            const { cor: corCategoria } = getCategoriaIndiceCalor(
-              Number(indiceCalor),
-            );
-            cor = corCategoria;
-            hi = Number(indiceCalor).toFixed(1);
-          }
-          return { estacao, posicao: [dados.lat, dados.lon], cor, hi, dados };
-        }),
+        buscarDadosInstantaneosEstacao(estacao.id).then(
+          (dados): MarcadorMapa | null => {
+            if (!dados?.lat || !dados?.lon) return null;
+            let cor = "#7f8c8d";
+            let hi: string | null = null;
+            if (dados.temperatura && dados.umidade) {
+              const { indiceCalor } = calculateHeatIndex(
+                Number(dados.temperatura),
+                Number(dados.umidade),
+              );
+              const { cor: corCategoria } = getCategoriaIndiceCalor(
+                Number(indiceCalor),
+              );
+              cor = corCategoria;
+              hi = Number(indiceCalor).toFixed(1);
+            }
+            return { estacao, posicao: [dados.lat, dados.lon], cor, hi, dados };
+          },
+        ),
       ),
-    ).then((results) => setMarcadores(results.filter(Boolean)));
+    ).then((results) =>
+      setMarcadores(results.filter((r): r is MarcadorMapa => r !== null)),
+    );
   }, [refreshKey]);
 
   return (

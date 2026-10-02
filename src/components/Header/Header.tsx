@@ -1,11 +1,17 @@
 import { useState } from "react";
+import image from "../../assets/thermometer.png";
+import type { MenuPagina } from "../../types/domain";
 import "./Header.css";
-import image from '../../assets/thermometer.png';
 
-export default function Header({ menuSelecionado, selecionarMenu }) {
+interface HeaderProps {
+  menuSelecionado: MenuPagina;
+  selecionarMenu: (pagina: MenuPagina) => void;
+}
+
+export default function Header({ menuSelecionado, selecionarMenu }: HeaderProps) {
   const [navAberta, setNavAberta] = useState(false);
 
-  const handleNavClick = (pagina) => {
+  const handleNavClick = (pagina: MenuPagina) => {
     selecionarMenu(pagina);
     setNavAberta(false);
   };

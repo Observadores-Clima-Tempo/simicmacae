@@ -1,37 +1,38 @@
-import {BASE_URL, commonParams} from  './apiConfig.js';
+import { BASE_URL, commonParams } from "./apiConfig";
+import type { PwsResponse } from "../types/domain";
 
 export const weatherServiceAPI = {
-
-  // Leitura Instantânea
-  getLeituraInstantaneaAPI: async (stationId) => {
+  getLeituraInstantaneaAPI: async (stationId: string): Promise<PwsResponse> => {
     const url = `${BASE_URL}/observations/current?stationId=${stationId}${commonParams}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Erro na requisição API: ${response.status}`);
     }
     const text = await response.text();
-    return text ? JSON.parse(text) : { observations: [] };
+    return text ? (JSON.parse(text) as PwsResponse) : { observations: [] };
   },
 
-  // Histórico de 24 horas
-  getHistoricoDiariaAPI: async (stationId) => {
+  getHistoricoDiariaAPI: async (stationId: string): Promise<PwsResponse> => {
     const url = `${BASE_URL}/observations/all/1day?stationId=${stationId}${commonParams}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Erro na requisição API: ${response.status}`);
     }
     const text = await response.text();
-    return text ? JSON.parse(text) : { observations: [] };
+    return text ? (JSON.parse(text) as PwsResponse) : { observations: [] };
   },
 
-  // Histórico por Intervalo de Datas
-  getHistoricoIntervaloDataAPI: async (stationId, startDate, endDate) => {
+  getHistoricoIntervaloDataAPI: async (
+    stationId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<PwsResponse> => {
     const url = `${BASE_URL}/history/daily?stationId=${stationId}${commonParams}&startDate=${startDate}&endDate=${endDate}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Erro na requisição API: ${response.status}`);
     }
     const text = await response.text();
-    return text ? JSON.parse(text) : { observations: [] };
-  }
+    return text ? (JSON.parse(text) as PwsResponse) : { observations: [] };
+  },
 };

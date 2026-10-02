@@ -1,4 +1,5 @@
 import "./Cortina.css";
+
 export default function Cortina() {
   return (
     <div id="mobile-only-message">

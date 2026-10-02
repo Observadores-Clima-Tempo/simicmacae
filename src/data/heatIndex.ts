@@ -1,4 +1,6 @@
-export const categoriasIndiceCalor = [
+import type { CategoriaIndiceCalor } from "../types/domain";
+
+export const categoriasIndiceCalor: CategoriaIndiceCalor[] = [
   {
     categoria: "Normal",
     classe: "ic-normal",

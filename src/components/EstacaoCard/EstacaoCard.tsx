@@ -1,35 +1,59 @@
-import React, { useState, useEffect } from "react";
-import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { GaugeComponent } from "react-gauge-component";
+import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
+import type { DadosComIndiceCalor } from "../../types/domain";
 import "./EstacaoCard.css";
 
-export default function EstacaoCard({ stationId, children, mostrarGauge = true, refreshKey }) {
-  const [dadosEstacao, setDadosEstacao] = useState(null);
+interface EstacaoCardProps {
+  stationId: string;
+  children: ReactNode;
+  mostrarGauge?: boolean;
+  refreshKey?: number;
+}
+
+interface DadosOffline {
+  temperatura: null;
+  umidade: null;
+  indiceCalor: null;
+  categoria: string;
+  cor: string;
+}
+
+const DADOS_OFFLINE: DadosOffline = {
+  temperatura: null,
+  umidade: null,
+  indiceCalor: null,
+  categoria: "Estação Offline",
+  cor: "#7f8c8d",
+};
+
+export default function EstacaoCard({
+  stationId,
+  children,
+  mostrarGauge = true,
+  refreshKey,
+}: EstacaoCardProps) {
+  const [dadosEstacao, setDadosEstacao] = useState<DadosComIndiceCalor | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     buscarDadosInstantaneosEstacao(stationId)
-      .then((dados) => setDadosEstacao(dados))
+      .then((dados) => {
+        if (!dados) {
+          console.warn("Dados indisponíveis para a estação:", stationId);
+        }
+        setDadosEstacao(dados);
+      })
       .finally(() => setLoading(false));
   }, [stationId, refreshKey]);
 
   if (loading) return <p>Carregando dados de Macaé...</p>;
 
-  if (!dadosEstacao) {
-    console.warn("Dados indisponíveis para a estação:", stationId);
-    setDadosEstacao({
-      temperatura: null,
-      umidade: null,
-      indiceCalor: null,
-      categoria: "Estação Offline",
-      cor: "#7f8c8d",
-    });
-    return null;
-  }
+  const dados: DadosComIndiceCalor | DadosOffline = dadosEstacao ?? DADOS_OFFLINE;
+  const offline = !dados.indiceCalor;
 
-  const offline = !dadosEstacao.indiceCalor;
-
-  const coresSubArcs = offline
+  const coresSubArcs: [string, string, string, string, string] = offline
     ? ["#b0b0b0", "#959595", "#7a7a7a", "#606060", "#444444"]
     : ["#2ecc71", "#f1c40f", "#e67e22", "#e74c3c", "#8e44ad"];
 
@@ -41,14 +65,14 @@ export default function EstacaoCard({ stationId, children, mostrarGauge = true, 
         <div
           className="bkg-categoria-ic"
           style={{
-            backgroundColor: `${dadosEstacao.cor}`,
+            backgroundColor: `${dados.cor}`,
           }}
         >
-          <p className="categoria-ic"> {dadosEstacao.categoria}</p>
+          <p className="categoria-ic"> {dados.categoria}</p>
         </div>
 
         <GaugeComponent
-          value={dadosEstacao.indiceCalor || 0}
+          value={Number(dados.indiceCalor) || 0}
           type="semicircle"
           minValue={16}
           maxValue={65}
@@ -124,17 +148,17 @@ export default function EstacaoCard({ stationId, children, mostrarGauge = true, 
           <tr className="estacao-card-linha-tab">
             <td className="estacao-card-titulo-tab">Temperatura:</td>
             <td className="estacao-card-valor-tab">
-              {dadosEstacao.temperatura}°C
+              {dados.temperatura}°C
             </td>
           </tr>
           <tr className="estacao-card-linha-tab">
             <td className="estacao-card-titulo-tab">Umidade:</td>
-            <td className="estacao-card-valor-tab">{dadosEstacao.umidade}%</td>
+            <td className="estacao-card-valor-tab">{dados.umidade}%</td>
           </tr>
           <tr className="estacao-card-linha-tab">
             <td className="estacao-card-titulo-tab">Índice de Calor:</td>
             <td className="estacao-card-valor-tab">
-              {dadosEstacao.indiceCalor}°C
+              {dados.indiceCalor}°C
             </td>
           </tr>
         </tbody>

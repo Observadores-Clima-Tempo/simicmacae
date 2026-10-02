@@ -1,40 +1,54 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   ReferenceArea,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
-  ResponsiveContainer,
 } from "recharts";
-
-const isMobile = () => window.innerWidth < 768;
 import { categoriasIndiceCalor } from "../../data/heatIndex";
 import {
-  getCategoriaIndiceCalor,
   calculateHeatIndex,
+  getCategoriaIndiceCalor,
 } from "../../utils/heatIndexCalculator";
-import { buscarDadosDiariosEstacao, buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
+import {
+  buscarDadosDiariosEstacao,
+  buscarDadosInstantaneosEstacao,
+} from "../../utils/buscarDados";
+import type { ChartPoint } from "../../types/domain";
 import "./EstacaoChart.css";
 
+const isMobile = (): boolean => window.innerWidth < 768;
+
 // Converter horário "HH:MM" para minutos totais (ex: "16:20" => 980)
-const timeToMinutes = (timeStr) => {
+const timeToMinutes = (timeStr: string): number => {
   const [h, m] = timeStr.split(":").map(Number);
-  return h * 60 + m;
+  return h! * 60 + m!;
 };
 
 // Converter minutos de volta para formato HH:MM
-const minutesToLabel = (min) => {
+const minutesToLabel = (min: number): string => {
   const h = Math.floor(min / 60);
   const m = min % 60;
   return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
 };
 
-export default function EstacaoChart({ stationId, children, refreshKey }) {
-  const [chartData, setChartData] = useState([]);
+interface EstacaoChartProps {
+  stationId: string;
+  children: ReactNode;
+  refreshKey?: number;
+}
+
+export default function EstacaoChart({
+  stationId,
+  children,
+  refreshKey,
+}: EstacaoChartProps) {
+  const [chartData, setChartData] = useState<ChartPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +57,7 @@ export default function EstacaoChart({ stationId, children, refreshKey }) {
       buscarDadosInstantaneosEstacao(stationId),
     ])
       .then(([dados, instantaneo]) => {
-        const processado =
+        const processado: ChartPoint[] =
           dados && dados.length > 0
             ? dados.map((d) => {
                 const { indiceCalor } = calculateHeatIndex(
@@ -61,7 +75,7 @@ export default function EstacaoChart({ stationId, children, refreshKey }) {
         if (instantaneo?.indiceCalor) {
           const agora = new Date();
           const horaAtual = `${agora.getHours().toString().padStart(2, "0")}:${agora.getMinutes().toString().padStart(2, "0")}`;
-          const ultimoPonto = {
+          const ultimoPonto: ChartPoint = {
             time: horaAtual,
             hi: Number(instantaneo.indiceCalor),
             timeValue: timeToMinutes(horaAtual),
@@ -81,7 +95,7 @@ export default function EstacaoChart({ stationId, children, refreshKey }) {
 
   // domínio máximo é o valor do último ponto
   const maxDomain =
-    chartData.length > 0 ? chartData[chartData.length - 1].timeValue : 1440;
+    chartData.length > 0 ? chartData[chartData.length - 1]!.timeValue : 1440;
 
   // Gerar ticks a cada 60 minutos (1 hora) até o máximo do domínio
   const ticks = Array.from(
@@ -99,7 +113,7 @@ export default function EstacaoChart({ stationId, children, refreshKey }) {
       <ResponsiveContainer
         width="100%"
         height="100%"
-        style={{ flex: 1, minHeight: 0 }}
+        style={{ flex: 1, minHeight: 0 } as CSSProperties}
       >
         <LineChart
           data={chartData}
@@ -110,24 +124,22 @@ export default function EstacaoChart({ stationId, children, refreshKey }) {
         >
           <CartesianGrid stroke="#aaa" strokeDasharray="3 3" vertical={false} />
 
-          {categoriasIndiceCalor.map(
-            ({ categoria, classe, cor, intervalo }) => (
-              <ReferenceArea
-                key={classe}
-                y1={intervalo.min === -Infinity ? 16 : intervalo.min}
-                y2={intervalo.max === Infinity ? 65 : intervalo.max}
-                fill={cor}
-                fillOpacity={0.25}
-              />
-            ),
-          )}
+          {categoriasIndiceCalor.map(({ classe, cor, intervalo }) => (
+            <ReferenceArea
+              key={classe}
+              y1={intervalo.min === -Infinity ? 16 : intervalo.min}
+              y2={intervalo.max === Infinity ? 65 : intervalo.max}
+              fill={cor}
+              fillOpacity={0.25}
+            />
+          ))}
 
           <XAxis
             dataKey="timeValue"
             type="number"
             ticks={ticks}
             tickFormatter={minutesToLabel}
-            domain={[0, maxDomain]} // Agora termina exatamente no último dado
+            domain={[0, maxDomain]}
             interval={0}
             tick={{ fontSize: 12, fill: "#666" }}
           />
@@ -157,7 +169,7 @@ export default function EstacaoChart({ stationId, children, refreshKey }) {
                   }}
                 >
                   <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
-                    {minutesToLabel(label)} {/* Mostrará ex: 16:20 */}
+                    {minutesToLabel(Number(label))}
                   </p>
                   <p
                     style={{
