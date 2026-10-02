@@ -1,19 +1,28 @@
 @media (max-width: 767px) {
+  /* Só na página "Todas as Estações": a página ocupa a altura da tela. */
+  .App:has(.estacao-card-list-wrapper) {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
   .estacao-card-list-wrapper {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    flex: 1;
+    min-height: 0;
   }
 
+  /* No celular mostramos apenas o mapa — os cards ficam ocultos. */
   .estacao-card-list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: none;
   }
 
-  .estacao-card-list-container .estacao-card-container {
-    width: 100%;
-    max-width: unset;
+  /* Mapa ocupa a largura total e o espaço vertical restante abaixo do header. */
+  .estacao-card-list-wrapper .estacao-map-geral-container {
+    flex: 1;
+    height: auto;
+    min-height: 0;
   }
 }
 

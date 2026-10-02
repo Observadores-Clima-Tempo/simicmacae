@@ -24,6 +24,31 @@ import "./EstacaoChart.css";
 
 const isMobile = (): boolean => window.innerWidth < 768;
 
+// Passo padrão dos ticks do eixo X: 1 hora
+const DESKTOP_TICK_STEP_MINUTES = 60;
+// No mobile, alvo de intervalos entre rótulos (=> até 7 rótulos "HH:MM")
+const MOBILE_MAX_TICK_INTERVALS = 6;
+
+// Passo dos ticks do eixo X. No desktop mantém 1h; no mobile aumenta o passo
+// (mínimo de 2h) para que os rótulos de horário não se sobreponham no fim do dia.
+const getTickStepMinutes = (maxDomain: number): number => {
+  if (!isMobile()) return DESKTOP_TICK_STEP_MINUTES;
+  const maxHours = maxDomain / 60;
+  const hoursPerTick = Math.max(
+    2,
+    Math.ceil(maxHours / MOBILE_MAX_TICK_INTERVALS),
+  );
+  return hoursPerTick * 60;
+};
+
+// Gerar ticks do início (00:00) até o máximo do domínio com o passo calculado
+const buildTicks = (maxDomain: number): number[] => {
+  const step = getTickStepMinutes(maxDomain);
+  const ticks: number[] = [];
+  for (let t = 0; t <= maxDomain; t += step) ticks.push(t);
+  return ticks;
+};
+
 // Converter horário "HH:MM" para minutos totais (ex: "16:20" => 980)
 const timeToMinutes = (timeStr: string): number => {
   const [h, m] = timeStr.split(":").map(Number);
@@ -93,11 +118,9 @@ export default function EstacaoChart({
   const maxDomain =
     chartData.length > 0 ? chartData[chartData.length - 1]!.timeValue : 1440;
 
-  // Gerar ticks a cada 60 minutos (1 hora) até o máximo do domínio
-  const ticks = Array.from(
-    { length: Math.floor(maxDomain / 60) + 1 },
-    (_, i) => i * 60,
-  );
+  // Ticks adaptativos: 1h no desktop; passo maior no mobile para evitar a
+  // sobreposição dos rótulos de horário perto do fim do dia.
+  const ticks = buildTicks(maxDomain);
 
   return (
     <div className="estacao-chart-container">
