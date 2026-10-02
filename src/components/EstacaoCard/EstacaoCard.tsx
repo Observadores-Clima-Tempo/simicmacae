@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { GaugeComponent } from "react-gauge-component";
-import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
+import { useEstacaoInstantanea } from "../../hooks/useEstacoes";
 import type { DadosComIndiceCalor } from "../../types/domain";
 import "./EstacaoCard.css";
 
@@ -9,7 +9,6 @@ interface EstacaoCardProps {
   stationId: string;
   children: ReactNode;
   mostrarGauge?: boolean;
-  refreshKey?: number;
 }
 
 interface DadosOffline {
@@ -32,26 +31,19 @@ export default function EstacaoCard({
   stationId,
   children,
   mostrarGauge = true,
-  refreshKey,
 }: EstacaoCardProps) {
-  const [dadosEstacao, setDadosEstacao] = useState<DadosComIndiceCalor | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isPending } = useEstacaoInstantanea(stationId);
 
   useEffect(() => {
-    buscarDadosInstantaneosEstacao(stationId)
-      .then((dados) => {
-        if (!dados) {
-          console.warn("Dados indisponíveis para a estação:", stationId);
-        }
-        setDadosEstacao(dados);
-      })
-      .finally(() => setLoading(false));
-  }, [stationId, refreshKey]);
+    if (!isPending && !data) {
+      console.warn("Dados indisponíveis para a estação:", stationId);
+    }
+  }, [isPending, data, stationId]);
 
-  if (loading) return <p>Carregando dados de Macaé...</p>;
+  if (isPending) return <p>Carregando dados de Macaé...</p>;
 
-  const dados: DadosComIndiceCalor | DadosOffline = dadosEstacao ?? DADOS_OFFLINE;
-  const offline = !dados.indiceCalor;
+  const dados: DadosComIndiceCalor | DadosOffline = data ?? DADOS_OFFLINE;
+  const offline = dados.indiceCalor === null;
 
   const coresSubArcs: [string, string, string, string, string] = offline
     ? ["#b0b0b0", "#959595", "#7a7a7a", "#606060", "#444444"]
@@ -72,7 +64,7 @@ export default function EstacaoCard({
         </div>
 
         <GaugeComponent
-          value={Number(dados.indiceCalor) || 0}
+          value={dados.indiceCalor ?? 0}
           type="semicircle"
           minValue={16}
           maxValue={65}
@@ -148,7 +140,7 @@ export default function EstacaoCard({
           <tr className="estacao-card-linha-tab">
             <td className="estacao-card-titulo-tab">Temperatura:</td>
             <td className="estacao-card-valor-tab">
-              {dados.temperatura}°C
+              {dados.temperatura?.toFixed(1)}°C
             </td>
           </tr>
           <tr className="estacao-card-linha-tab">
@@ -158,7 +150,7 @@ export default function EstacaoCard({
           <tr className="estacao-card-linha-tab">
             <td className="estacao-card-titulo-tab">Índice de Calor:</td>
             <td className="estacao-card-valor-tab">
-              {dados.indiceCalor}°C
+              {dados.indiceCalor?.toFixed(1)}°C
             </td>
           </tr>
         </tbody>

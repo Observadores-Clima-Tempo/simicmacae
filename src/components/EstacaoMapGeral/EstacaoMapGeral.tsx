@@ -1,14 +1,10 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import * as L from "leaflet";
 import type { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { catalogoEstacoes } from "../../data/estacoes";
-import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
-import {
-  calculateHeatIndex,
-  getCategoriaIndiceCalor,
-} from "../../utils/heatIndexCalculator";
+import { useEstacoesInstantaneas } from "../../hooks/useEstacoes";
 import type { MarcadorMapa } from "../../types/domain";
 import "./EstacaoMapGeral.css";
 
@@ -48,41 +44,24 @@ function criarIcone(cor: string, hi: string | null) {
   });
 }
 
-interface EstacaoMapGeralProps {
-  refreshKey?: number;
-}
+export default function EstacaoMapGeral() {
+  const estacoesAtivas = useMemo(() => catalogoEstacoes.getEstacoesAtivas(), []);
+  const leituras = useEstacoesInstantaneas(estacoesAtivas);
 
-export default function EstacaoMapGeral({ refreshKey }: EstacaoMapGeralProps) {
-  const [marcadores, setMarcadores] = useState<MarcadorMapa[]>([]);
-
-  useEffect(() => {
-    const estacoes = catalogoEstacoes.getEstacoesAtivas();
-    Promise.all(
-      estacoes.map((estacao) =>
-        buscarDadosInstantaneosEstacao(estacao.id).then(
-          (dados): MarcadorMapa | null => {
-            if (!dados?.lat || !dados?.lon) return null;
-            let cor = "#7f8c8d";
-            let hi: string | null = null;
-            if (dados.temperatura && dados.umidade) {
-              const { indiceCalor } = calculateHeatIndex(
-                Number(dados.temperatura),
-                Number(dados.umidade),
-              );
-              const { cor: corCategoria } = getCategoriaIndiceCalor(
-                Number(indiceCalor),
-              );
-              cor = corCategoria;
-              hi = Number(indiceCalor).toFixed(1);
-            }
-            return { estacao, posicao: [dados.lat, dados.lon], cor, hi, dados };
-          },
-        ),
-      ),
-    ).then((results) =>
-      setMarcadores(results.filter((r): r is MarcadorMapa => r !== null)),
-    );
-  }, [refreshKey]);
+  const marcadores: MarcadorMapa[] = leituras.flatMap(
+    ({ estacao, dados }): MarcadorMapa[] => {
+      if (!dados?.lat || !dados?.lon) return [];
+      return [
+        {
+          estacao,
+          posicao: [dados.lat, dados.lon],
+          cor: dados.cor,
+          hi: dados.indiceCalor.toFixed(1),
+          dados,
+        },
+      ];
+    },
+  );
 
   return (
     <div className="estacao-map-geral-container">
@@ -106,7 +85,7 @@ export default function EstacaoMapGeral({ refreshKey }: EstacaoMapGeralProps) {
             <Popup>
               <strong>{estacao.bairro}</strong>
               <br />
-              Temperatura: {dados.temperatura}°C
+              Temperatura: {dados.temperatura.toFixed(1)}°C
               <br />
               Umidade: {dados.umidade}%
               <br />

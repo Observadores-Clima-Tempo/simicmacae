@@ -1,39 +1,21 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import EstacaoBotao from "../EstacaoBotao/EstacaoBotao";
 import { catalogoEstacoes } from "../../data/estacoes";
-import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
+import { useEstacoesInstantaneas } from "../../hooks/useEstacoes";
 import type { Estacao } from "../../types/domain";
 import "./EstacaoMenu.css";
 
 interface EstacaoMenuProps {
   estacaoSelecionada: (estacao: Estacao) => void;
-  refreshKey?: number;
 }
 
-export default function EstacaoMenu({
-  estacaoSelecionada,
-  refreshKey,
-}: EstacaoMenuProps) {
-  const [estacoesOrdenadas, setEstacoesOrdenadas] = useState<Estacao[]>(
-    catalogoEstacoes.getEstacoesAtivas(),
-  );
+export default function EstacaoMenu({ estacaoSelecionada }: EstacaoMenuProps) {
+  const estacoesAtivas = useMemo(() => catalogoEstacoes.getEstacoesAtivas(), []);
+  const leituras = useEstacoesInstantaneas(estacoesAtivas);
 
-  useEffect(() => {
-    const estacoes = catalogoEstacoes.getEstacoesAtivas();
-    Promise.all(
-      estacoes.map((estacao) =>
-        buscarDadosInstantaneosEstacao(estacao.id).then((dados) => ({
-          estacao,
-          online: !!dados,
-        })),
-      ),
-    ).then((resultados) => {
-      const ordenadas = resultados
-        .sort((a, b) => Number(b.online) - Number(a.online))
-        .map((r) => r.estacao);
-      setEstacoesOrdenadas(ordenadas);
-    });
-  }, [refreshKey]);
+  const estacoesOrdenadas = [...leituras]
+    .sort((a, b) => Number(!!b.dados) - Number(!!a.dados))
+    .map((leitura) => leitura.estacao);
 
   return (
     <>
@@ -45,7 +27,6 @@ export default function EstacaoMenu({
               key={estacao.id}
               stationId={estacao.id}
               funcaoClick={() => estacaoSelecionada(estacao)}
-              refreshKey={refreshKey}
             >
               {estacao.bairro}
             </EstacaoBotao>

@@ -1,35 +1,29 @@
-import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
+import { useEstacaoInstantanea } from "../../hooks/useEstacoes";
 import "./EstacaoBotao.css";
 
 interface EstacaoBotaoProps {
   children: ReactNode;
   stationId: string;
   funcaoClick: () => void;
-  refreshKey?: number;
 }
 
 export default function EstacaoBotao({
   children,
   stationId,
   funcaoClick,
-  refreshKey,
 }: EstacaoBotaoProps) {
-  const [corCategoria, setCorCategoria] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!stationId) return;
-    buscarDadosInstantaneosEstacao(stationId).then((dados) => {
-      if (dados?.cor) setCorCategoria(dados.cor);
-    });
-  }, [stationId, refreshKey]);
+  const { data } = useEstacaoInstantanea(stationId);
 
   return (
     <button className="estacao-botao-menu" onClick={funcaoClick}>
       <i
         className="fa fa-thermometer"
-        style={{ color: corCategoria ?? "#aaa", marginRight: "8px", fontSize: "24px" }}
+        style={{
+          color: data?.cor ?? "#aaa",
+          marginRight: "8px",
+          fontSize: "24px",
+        }}
       />
       {children}
     </button>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import {
   CartesianGrid,
@@ -16,9 +16,9 @@ import {
   getCategoriaIndiceCalor,
 } from "../../utils/heatIndexCalculator";
 import {
-  buscarDadosDiariosEstacao,
-  buscarDadosInstantaneosEstacao,
-} from "../../utils/buscarDados";
+  useEstacaoDiaria,
+  useEstacaoInstantanea,
+} from "../../hooks/useEstacoes";
 import type { ChartPoint } from "../../types/domain";
 import "./EstacaoChart.css";
 
@@ -40,58 +40,43 @@ const minutesToLabel = (min: number): string => {
 interface EstacaoChartProps {
   stationId: string;
   children: ReactNode;
-  refreshKey?: number;
 }
 
 export default function EstacaoChart({
   stationId,
   children,
-  refreshKey,
 }: EstacaoChartProps) {
-  const [chartData, setChartData] = useState<ChartPoint[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: dadosDiarios, isPending } = useEstacaoDiaria(stationId);
+  const { data: instantaneo } = useEstacaoInstantanea(stationId);
 
-  useEffect(() => {
-    Promise.all([
-      buscarDadosDiariosEstacao(stationId),
-      buscarDadosInstantaneosEstacao(stationId),
-    ])
-      .then(([dados, instantaneo]) => {
-        const processado: ChartPoint[] =
-          dados && dados.length > 0
-            ? dados.map((d) => {
-                const { indiceCalor } = calculateHeatIndex(
-                  Number(d.temperatura),
-                  Number(d.umidade),
-                );
-                return {
-                  time: d.hora.slice(0, 5),
-                  hi: Number(indiceCalor),
-                  timeValue: timeToMinutes(d.hora),
-                };
-              })
-            : [];
+  const chartData = useMemo<ChartPoint[]>(() => {
+    const processado: ChartPoint[] =
+      dadosDiarios && dadosDiarios.length > 0
+        ? dadosDiarios.map((d) => ({
+            time: d.hora.slice(0, 5),
+            hi: calculateHeatIndex(d.temperatura, d.umidade).indiceCalor,
+            timeValue: timeToMinutes(d.hora),
+          }))
+        : [];
 
-        if (instantaneo?.indiceCalor) {
-          const agora = new Date();
-          const horaAtual = `${agora.getHours().toString().padStart(2, "0")}:${agora.getMinutes().toString().padStart(2, "0")}`;
-          const ultimoPonto: ChartPoint = {
-            time: horaAtual,
-            hi: Number(instantaneo.indiceCalor),
-            timeValue: timeToMinutes(horaAtual),
-          };
-          const ultimo = processado[processado.length - 1];
-          if (!ultimo || ultimo.timeValue !== ultimoPonto.timeValue) {
-            processado.push(ultimoPonto);
-          }
-        }
+    if (instantaneo) {
+      const agora = new Date();
+      const horaAtual = `${agora.getHours().toString().padStart(2, "0")}:${agora.getMinutes().toString().padStart(2, "0")}`;
+      const ultimoPonto: ChartPoint = {
+        time: horaAtual,
+        hi: instantaneo.indiceCalor,
+        timeValue: timeToMinutes(horaAtual),
+      };
+      const ultimo = processado[processado.length - 1];
+      if (!ultimo || ultimo.timeValue !== ultimoPonto.timeValue) {
+        processado.push(ultimoPonto);
+      }
+    }
 
-        setChartData(processado);
-      })
-      .finally(() => setLoading(false));
-  }, [stationId, refreshKey]);
+    return processado;
+  }, [dadosDiarios, instantaneo]);
 
-  if (loading) return <p>Carregando gráfico...</p>;
+  if (isPending) return <p>Carregando gráfico...</p>;
 
   // domínio máximo é o valor do último ponto
   const maxDomain =

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import "./App.css";
 import "leaflet/dist/leaflet.css";
 import Header from "./components/Header/Header";
@@ -9,75 +9,46 @@ import { catalogoEstacoes } from "./data/estacoes";
 import EstacaoChart from "./components/EstacaoChart/EstacaoChart";
 import EstacaoMap from "./components/EstacaoMap/EstacaoMap";
 import Sobre from "./components/Sobre/Sobre";
-import * as constantes from "./data/constantes";
-import { buscarDadosInstantaneosEstacao } from "./utils/buscarDados";
+import { useEstacoesInstantaneas } from "./hooks/useEstacoes";
 import type { Estacao, MenuPagina } from "./types/domain";
 
 const ESTACAO_INDEFINIDA: Estacao = { id: "", bairro: "", operando: false };
 
 function App() {
-  const [estacaoSelecionadaInfo, setEstacaoSelecionadaInfo] =
-    useState<Estacao>(() => {
-      const primeira = catalogoEstacoes.getPrimeiraEstacaoAtiva();
-      const fallback = catalogoEstacoes.getTodasEstacoes()[0];
-      return primeira ?? fallback ?? ESTACAO_INDEFINIDA;
-    });
+  const estacoesAtivas = useMemo(() => catalogoEstacoes.getEstacoesAtivas(), []);
+  const leituras = useEstacoesInstantaneas(estacoesAtivas);
+
+  const [estacaoEscolhida, setEstacaoEscolhida] = useState<Estacao | null>(null);
   const [menuSelecionado, setMenuSelecionado] = useState<MenuPagina>("inicio");
-  const [refreshKey, setRefreshKey] = useState(0);
 
-  // Seleciona a primeira estação com dados reais disponíveis na API
-  useEffect(() => {
-    const estacoes = catalogoEstacoes.getEstacoesAtivas();
-    Promise.all(
-      estacoes.map((estacao, index) =>
-        buscarDadosInstantaneosEstacao(estacao.id).then((dados) => ({
-          estacao,
-          index,
-          online: !!dados,
-        })),
-      ),
-    ).then((resultados) => {
-      const primeiraOnline = resultados
-        .sort((a, b) => a.index - b.index)
-        .find((r) => r.online);
-      if (primeiraOnline) {
-        setEstacaoSelecionadaInfo(primeiraOnline.estacao);
-      }
-    });
+  const estacaoPadrao = useMemo(() => {
+    const primeira = catalogoEstacoes.getPrimeiraEstacaoAtiva();
+    const fallback = catalogoEstacoes.getTodasEstacoes()[0];
+    return primeira ?? fallback ?? ESTACAO_INDEFINIDA;
   }, []);
 
-  // Atualiza os dados de todas as estações periodicamente
-  useEffect(() => {
-    const intervalo = setInterval(() => {
-      setRefreshKey((k) => k + 1);
-    }, constantes.INTERVALO_ATUALIZACAO);
-    return () => clearInterval(intervalo);
-  }, []);
+  const aguardandoPrimeirasLeituras = leituras.some((leitura) => leitura.carregando);
+  const primeiraOnline = leituras.find((leitura) => leitura.dados)?.estacao;
+
+  const estacaoSelecionadaInfo =
+    estacaoEscolhida ??
+    (aguardandoPrimeirasLeituras ? estacaoPadrao : (primeiraOnline ?? estacaoPadrao));
 
   const conteudoPagina = () => {
     switch (menuSelecionado) {
       case "estacoes":
-        return <EstacaoCardList mostrarGauge={false} refreshKey={refreshKey} />;
+        return <EstacaoCardList mostrarGauge={false} />;
       case "sobre":
         return <Sobre />;
       case "inicio":
       default:
         return (
           <>
-            <EstacaoMenu
-              estacaoSelecionada={setEstacaoSelecionadaInfo}
-              refreshKey={refreshKey}
-            />
-            <EstacaoCard
-              stationId={estacaoSelecionadaInfo.id}
-              refreshKey={refreshKey}
-            >
+            <EstacaoMenu estacaoSelecionada={setEstacaoEscolhida} />
+            <EstacaoCard stationId={estacaoSelecionadaInfo.id}>
               {estacaoSelecionadaInfo.bairro}
             </EstacaoCard>
-            <EstacaoChart
-              stationId={estacaoSelecionadaInfo.id}
-              refreshKey={refreshKey}
-            >
+            <EstacaoChart stationId={estacaoSelecionadaInfo.id}>
               {estacaoSelecionadaInfo.bairro}
             </EstacaoChart>
             <EstacaoMap stationId={estacaoSelecionadaInfo.id}>

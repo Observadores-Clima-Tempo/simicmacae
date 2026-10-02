@@ -23,11 +23,11 @@ export interface ClassificacaoIndiceCalor {
 }
 
 export type IndiceCalorCalculado = ClassificacaoIndiceCalor & {
-  indiceCalor: string;
+  indiceCalor: number;
 };
 
 export interface TelemetriaInstantanea {
-  temperatura: string;
+  temperatura: number;
   umidade: number;
   lat: number;
   lon: number;
@@ -46,7 +46,7 @@ export type DadosComIndiceCalor = TelemetriaInstantanea & IndiceCalorCalculado;
 
 export interface DadoDiario {
   hora: string;
-  temperatura: string;
+  temperatura: number;
   umidade: number;
 }
 
@@ -64,27 +64,4 @@ export interface MarcadorMapa {
   cor: string;
   hi: string | null;
   dados: DadosComIndiceCalor;
-}
-
-export interface CacheEntry<T> {
-  dados: T;
-  timestamp: number;
-}
-
-export interface PwsMetric {
-  temp: number;
-  tempAvg: number;
-}
-
-export interface PwsObservation {
-  metric: PwsMetric;
-  humidity: number;
-  humidityAvg: number;
-  lat: number;
-  lon: number;
-  obsTimeLocal: string;
-}
-
-export interface PwsResponse {
-  observations: PwsObservation[];
 }

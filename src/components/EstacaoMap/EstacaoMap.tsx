@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
 import * as L from "leaflet";
 import type { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./EstacaoMap.css";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { buscarDadosInstantaneosEstacao } from "../../utils/buscarDados";
-import {
-  calculateHeatIndex,
-  getCategoriaIndiceCalor,
-} from "../../utils/heatIndexCalculator";
+import { useEstacaoInstantanea } from "../../hooks/useEstacoes";
 
 const CENTRO_MACAE_PADRAO: LatLngTuple = [-22.407436, -41.845993];
 
@@ -32,30 +28,14 @@ interface EstacaoMapProps {
 }
 
 export default function EstacaoMap({ stationId, children }: EstacaoMapProps) {
-  const [posicao, setPosicao] = useState<LatLngTuple | null>(null);
-  const [corCategoria, setCorCategoria] = useState("#2ecc71");
-  const [zoom, setZoom] = useState(12);
+  const { data } = useEstacaoInstantanea(stationId);
 
-  useEffect(() => {
-    if (!stationId) return;
-    buscarDadosInstantaneosEstacao(stationId).then((dados) => {
-      if (dados?.lat && dados?.lon) {
-        setPosicao([dados.lat, dados.lon]);
-        setZoom(15);
-        if (dados.temperatura && dados.umidade) {
-          const { indiceCalor } = calculateHeatIndex(
-            Number(dados.temperatura),
-            Number(dados.umidade),
-          );
-          const { cor } = getCategoriaIndiceCalor(Number(indiceCalor));
-          setCorCategoria(cor);
-        }
-      } else {
-        setPosicao(null);
-        setZoom(12);
-      }
-    });
-  }, [stationId]);
+  const posicao = useMemo<LatLngTuple | null>(
+    () => (data && data.lat && data.lon ? [data.lat, data.lon] : null),
+    [data],
+  );
+  const corCategoria = data?.cor ?? "#2ecc71";
+  const zoom = posicao ? 15 : 12;
 
   const iconeColorido = L.divIcon({
     className: "",

@@ -26,7 +26,7 @@ export const calculateHeatIndex = (
     const indiceCalorC = ((indiceCalorMediaF - 32) * 5) / 9;
     const categoriaCalor = getCategoriaIndiceCalor(indiceCalorC);
 
-    return { indiceCalor: indiceCalorC.toFixed(1), ...categoriaCalor };
+    return { indiceCalor: indiceCalorC, ...categoriaCalor };
   }
 
   // Equação de Regressão Múltipla da NOAA
@@ -56,7 +56,7 @@ export const calculateHeatIndex = (
   const indiceCalorC = ((indiceCalorF - 32) * 5) / 9;
   const categoriaCalor = getCategoriaIndiceCalor(indiceCalorC);
 
-  return { indiceCalor: indiceCalorC.toFixed(1), ...categoriaCalor };
+  return { indiceCalor: indiceCalorC, ...categoriaCalor };
 };
 
 export const getCategoriaIndiceCalor = (
