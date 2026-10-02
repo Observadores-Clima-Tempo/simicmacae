@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from "react";
-import type { ReactNode } from "react";
 import * as L from "leaflet";
 import type { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -24,10 +23,10 @@ function RecentralizarMapa({ posicao, zoom }: RecentralizarMapaProps) {
 
 interface EstacaoMapProps {
   stationId: string;
-  children: ReactNode;
+  bairro: string;
 }
 
-export default function EstacaoMap({ stationId, children }: EstacaoMapProps) {
+export default function EstacaoMap({ stationId, bairro }: EstacaoMapProps) {
   const { data } = useEstacaoInstantanea(stationId);
 
   const posicao = useMemo<LatLngTuple | null>(
@@ -87,7 +86,7 @@ export default function EstacaoMap({ stationId, children }: EstacaoMapProps) {
         {posicao && (
           <Marker position={posicao} icon={iconeColorido}>
             <Popup>
-              Bairro: {children} <br /> ID: {stationId}
+              Bairro: {bairro} <br /> ID: {stationId}
             </Popup>
           </Marker>
         )}

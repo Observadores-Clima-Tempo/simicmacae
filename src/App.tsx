@@ -1,38 +1,22 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import "./App.css";
-import "leaflet/dist/leaflet.css";
 import Header from "./components/Header/Header";
 import EstacaoMenu from "./components/EstacaoMenu/EstacaoMenu";
 import EstacaoCardList from "./components/EstacaoCardList/EstacaoCardList";
 import EstacaoCard from "./components/EstacaoCard/EstacaoCard";
-import { catalogoEstacoes } from "./data/estacoes";
-import EstacaoChart from "./components/EstacaoChart/EstacaoChart";
-import EstacaoMap from "./components/EstacaoMap/EstacaoMap";
 import Sobre from "./components/Sobre/Sobre";
-import { useEstacoesInstantaneas } from "./hooks/useEstacoes";
-import type { Estacao, MenuPagina } from "./types/domain";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
+import { useContextoEstacoes } from "./context/estacoesContext";
+import type { MenuPagina } from "./types/domain";
 
-const ESTACAO_INDEFINIDA: Estacao = { id: "", bairro: "", operando: false };
+const EstacaoChart = lazy(
+  () => import("./components/EstacaoChart/EstacaoChart"),
+);
+const EstacaoMap = lazy(() => import("./components/EstacaoMap/EstacaoMap"));
 
 function App() {
-  const estacoesAtivas = useMemo(() => catalogoEstacoes.getEstacoesAtivas(), []);
-  const leituras = useEstacoesInstantaneas(estacoesAtivas);
-
-  const [estacaoEscolhida, setEstacaoEscolhida] = useState<Estacao | null>(null);
+  const { estacaoSelecionada } = useContextoEstacoes();
   const [menuSelecionado, setMenuSelecionado] = useState<MenuPagina>("inicio");
-
-  const estacaoPadrao = useMemo(() => {
-    const primeira = catalogoEstacoes.getPrimeiraEstacaoAtiva();
-    const fallback = catalogoEstacoes.getTodasEstacoes()[0];
-    return primeira ?? fallback ?? ESTACAO_INDEFINIDA;
-  }, []);
-
-  const aguardandoPrimeirasLeituras = leituras.some((leitura) => leitura.carregando);
-  const primeiraOnline = leituras.find((leitura) => leitura.dados)?.estacao;
-
-  const estacaoSelecionadaInfo =
-    estacaoEscolhida ??
-    (aguardandoPrimeirasLeituras ? estacaoPadrao : (primeiraOnline ?? estacaoPadrao));
 
   const conteudoPagina = () => {
     switch (menuSelecionado) {
@@ -44,16 +28,27 @@ function App() {
       default:
         return (
           <>
-            <EstacaoMenu estacaoSelecionada={setEstacaoEscolhida} />
-            <EstacaoCard stationId={estacaoSelecionadaInfo.id}>
-              {estacaoSelecionadaInfo.bairro}
-            </EstacaoCard>
-            <EstacaoChart stationId={estacaoSelecionadaInfo.id}>
-              {estacaoSelecionadaInfo.bairro}
-            </EstacaoChart>
-            <EstacaoMap stationId={estacaoSelecionadaInfo.id}>
-              {estacaoSelecionadaInfo.bairro}
-            </EstacaoMap>
+            <EstacaoMenu />
+            <EstacaoCard
+              stationId={estacaoSelecionada.id}
+              bairro={estacaoSelecionada.bairro}
+            />
+            <ErrorBoundary fallback={<p>Não foi possível exibir o gráfico.</p>}>
+              <Suspense fallback={<p>Carregando gráfico...</p>}>
+                <EstacaoChart
+                  stationId={estacaoSelecionada.id}
+                  bairro={estacaoSelecionada.bairro}
+                />
+              </Suspense>
+            </ErrorBoundary>
+            <ErrorBoundary fallback={<p>Não foi possível exibir o mapa.</p>}>
+              <Suspense fallback={<p>Carregando mapa...</p>}>
+                <EstacaoMap
+                  stationId={estacaoSelecionada.id}
+                  bairro={estacaoSelecionada.bairro}
+                />
+              </Suspense>
+            </ErrorBoundary>
           </>
         );
     }
@@ -66,7 +61,9 @@ function App() {
           menuSelecionado={menuSelecionado}
           selecionarMenu={setMenuSelecionado}
         />
-        {conteudoPagina()}
+        <ErrorBoundary fallback={<p>Ocorreu um erro ao exibir o conteúdo.</p>}>
+          {conteudoPagina()}
+        </ErrorBoundary>
       </div>
     </>
   );

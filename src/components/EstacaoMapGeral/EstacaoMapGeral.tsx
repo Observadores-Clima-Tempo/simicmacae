@@ -1,9 +1,8 @@
-import { useMemo } from "react";
 import * as L from "leaflet";
 import type { LatLngTuple } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { catalogoEstacoes } from "../../data/estacoes";
+import { useContextoEstacoes } from "../../context/estacoesContext";
 import { useEstacoesInstantaneas } from "../../hooks/useEstacoes";
 import type { MarcadorMapa } from "../../types/domain";
 import "./EstacaoMapGeral.css";
@@ -45,7 +44,7 @@ function criarIcone(cor: string, hi: string | null) {
 }
 
 export default function EstacaoMapGeral() {
-  const estacoesAtivas = useMemo(() => catalogoEstacoes.getEstacoesAtivas(), []);
+  const { estacoesAtivas } = useContextoEstacoes();
   const leituras = useEstacoesInstantaneas(estacoesAtivas);
 
   const marcadores: MarcadorMapa[] = leituras.flatMap(

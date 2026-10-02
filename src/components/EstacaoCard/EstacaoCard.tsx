@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import type { ReactNode } from "react";
 import { GaugeComponent } from "react-gauge-component";
 import { useEstacaoInstantanea } from "../../hooks/useEstacoes";
 import type { DadosComIndiceCalor } from "../../types/domain";
@@ -7,7 +6,7 @@ import "./EstacaoCard.css";
 
 interface EstacaoCardProps {
   stationId: string;
-  children: ReactNode;
+  bairro: string;
   mostrarGauge?: boolean;
 }
 
@@ -29,7 +28,7 @@ const DADOS_OFFLINE: DadosOffline = {
 
 export default function EstacaoCard({
   stationId,
-  children,
+  bairro,
   mostrarGauge = true,
 }: EstacaoCardProps) {
   const { data, isPending } = useEstacaoInstantanea(stationId);
@@ -51,7 +50,7 @@ export default function EstacaoCard({
 
   return (
     <div className="estacao-card-container">
-      <h3 className="estacao-card-bairro">{children}</h3>
+      <h3 className="estacao-card-bairro">{bairro}</h3>
 
       <div className="container-principal-gauge">
         <div

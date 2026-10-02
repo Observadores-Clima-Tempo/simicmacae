@@ -1,16 +1,15 @@
-import type { ReactNode } from "react";
 import { useEstacaoInstantanea } from "../../hooks/useEstacoes";
 import "./EstacaoBotao.css";
 
 interface EstacaoBotaoProps {
-  children: ReactNode;
   stationId: string;
+  bairro: string;
   funcaoClick: () => void;
 }
 
 export default function EstacaoBotao({
-  children,
   stationId,
+  bairro,
   funcaoClick,
 }: EstacaoBotaoProps) {
   const { data } = useEstacaoInstantanea(stationId);
@@ -25,7 +24,7 @@ export default function EstacaoBotao({
           fontSize: "24px",
         }}
       />
-      {children}
+      {bairro}
     </button>
   );
 }

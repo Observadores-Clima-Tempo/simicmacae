@@ -1,16 +1,10 @@
-import { useMemo } from "react";
 import EstacaoBotao from "../EstacaoBotao/EstacaoBotao";
-import { catalogoEstacoes } from "../../data/estacoes";
+import { useContextoEstacoes } from "../../context/estacoesContext";
 import { useEstacoesInstantaneas } from "../../hooks/useEstacoes";
-import type { Estacao } from "../../types/domain";
 import "./EstacaoMenu.css";
 
-interface EstacaoMenuProps {
-  estacaoSelecionada: (estacao: Estacao) => void;
-}
-
-export default function EstacaoMenu({ estacaoSelecionada }: EstacaoMenuProps) {
-  const estacoesAtivas = useMemo(() => catalogoEstacoes.getEstacoesAtivas(), []);
+export default function EstacaoMenu() {
+  const { estacoesAtivas, selecionarEstacao } = useContextoEstacoes();
   const leituras = useEstacoesInstantaneas(estacoesAtivas);
 
   const estacoesOrdenadas = [...leituras]
@@ -26,10 +20,9 @@ export default function EstacaoMenu({ estacaoSelecionada }: EstacaoMenuProps) {
             <EstacaoBotao
               key={estacao.id}
               stationId={estacao.id}
-              funcaoClick={() => estacaoSelecionada(estacao)}
-            >
-              {estacao.bairro}
-            </EstacaoBotao>
+              bairro={estacao.bairro}
+              funcaoClick={() => selecionarEstacao(estacao)}
+            />
           ))}
         </menu>
       </div>

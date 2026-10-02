@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
 import {
   CartesianGrid,
   Line,
@@ -39,12 +39,12 @@ const minutesToLabel = (min: number): string => {
 
 interface EstacaoChartProps {
   stationId: string;
-  children: ReactNode;
+  bairro: string;
 }
 
 export default function EstacaoChart({
   stationId,
-  children,
+  bairro,
 }: EstacaoChartProps) {
   const { data: dadosDiarios, isPending } = useEstacaoDiaria(stationId);
   const { data: instantaneo } = useEstacaoInstantanea(stationId);
@@ -78,6 +78,17 @@ export default function EstacaoChart({
 
   if (isPending) return <p>Carregando gráfico...</p>;
 
+  if (chartData.length === 0) {
+    return (
+      <div className="estacao-chart-container">
+        <h3 className="estacao-chart-title">
+          Índice de Calor ao Longo do Dia - {bairro}
+        </h3>
+        <p>Sem dados para exibir.</p>
+      </div>
+    );
+  }
+
   // domínio máximo é o valor do último ponto
   const maxDomain =
     chartData.length > 0 ? chartData[chartData.length - 1]!.timeValue : 1440;
@@ -91,7 +102,7 @@ export default function EstacaoChart({
   return (
     <div className="estacao-chart-container">
       <h3 className="estacao-chart-title">
-        Índice de Calor ao Longo do Dia - {children}
+        Índice de Calor ao Longo do Dia - {bairro}
       </h3>
 
       {/* ResponsiveContainer preenche 100% da altura disponível na célula do grid */}
