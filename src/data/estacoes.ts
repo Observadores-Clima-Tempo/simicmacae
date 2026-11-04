@@ -33,4 +33,5 @@ const ESTACOES: Estacao[] = [
   { id: "IMACA54", bairro: "A. Celso Daniel", operando: true },
   { id: "IMACA56", bairro: "Praia do Pecado", operando: true },
   { id: "IMACA58", bairro: "Barra", operando: true },
+  { id: "IMACA60", bairro: "Botafogo", operando: true },
 ];
