@@ -28,6 +28,13 @@
     height: 100vh;
     overflow: hidden;
   } 
+
+  .App--previsao {
+    grid-template-rows: auto 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
 }
 
 body {

@@ -1,4 +1,4 @@
-import { BASE_URL, commonParams, REQUEST_TIMEOUT } from "./apiConfig";
+import { BASE_URL, getCommonParams, REQUEST_TIMEOUT } from "./apiConfig";
 import { pwsResponseSchema, type PwsResponse } from "./pwsSchemas";
 
 async function buscarObservacoes(
@@ -9,7 +9,7 @@ async function buscarObservacoes(
     ? AbortSignal.any([signal, AbortSignal.timeout(REQUEST_TIMEOUT)])
     : AbortSignal.timeout(REQUEST_TIMEOUT);
 
-  const response = await fetch(url, { signal: sinal });
+  const response = await fetch(`${url}${getCommonParams()}`, { signal: sinal });
   if (!response.ok) {
     throw new Error(`Erro na requisição API: ${response.status}`);
   }
@@ -25,7 +25,7 @@ export const weatherServiceAPI = {
     signal?: AbortSignal,
   ): Promise<PwsResponse> =>
     buscarObservacoes(
-      `${BASE_URL}/observations/current?stationId=${stationId}${commonParams}`,
+      `${BASE_URL}/observations/current?stationId=${stationId}`,
       signal,
     ),
 
@@ -34,7 +34,7 @@ export const weatherServiceAPI = {
     signal?: AbortSignal,
   ): Promise<PwsResponse> =>
     buscarObservacoes(
-      `${BASE_URL}/observations/all/1day?stationId=${stationId}${commonParams}`,
+      `${BASE_URL}/observations/all/1day?stationId=${stationId}`,
       signal,
     ),
 
@@ -45,7 +45,7 @@ export const weatherServiceAPI = {
     signal?: AbortSignal,
   ): Promise<PwsResponse> =>
     buscarObservacoes(
-      `${BASE_URL}/history/daily?stationId=${stationId}${commonParams}&startDate=${startDate}&endDate=${endDate}`,
+      `${BASE_URL}/history/daily?stationId=${stationId}&startDate=${startDate}&endDate=${endDate}`,
       signal,
     ),
 };

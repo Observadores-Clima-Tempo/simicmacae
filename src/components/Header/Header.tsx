@@ -31,6 +31,7 @@ export default function Header({ menuSelecionado, selecionarMenu }: HeaderProps)
       <nav className={`menu-navegacao${navAberta ? " nav-aberta" : ""}`}>
         <button onClick={() => handleNavClick("inicio")} disabled={menuSelecionado === "inicio"}>Painel</button>
         <button onClick={() => handleNavClick("estacoes")} disabled={menuSelecionado === "estacoes"}>Todas as Estações</button>
+        <button onClick={() => handleNavClick("previsao")} disabled={menuSelecionado === "previsao"}>Previsão</button>
         <button onClick={() => handleNavClick("sobre")} disabled={menuSelecionado === "sobre"}>Sobre</button>
       </nav>
     </header>

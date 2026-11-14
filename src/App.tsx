@@ -13,6 +13,7 @@ const EstacaoChart = lazy(
   () => import("./components/EstacaoChart/EstacaoChart"),
 );
 const EstacaoMap = lazy(() => import("./components/EstacaoMap/EstacaoMap"));
+const Previsao = lazy(() => import("./components/Previsao/Previsao"));
 
 function App() {
   const { estacaoSelecionada } = useContextoEstacoes();
@@ -22,6 +23,12 @@ function App() {
     switch (menuSelecionado) {
       case "estacoes":
         return <EstacaoCardList mostrarGauge={false} />;
+      case "previsao":
+        return (
+          <Suspense fallback={<p>Carregando previsão...</p>}>
+            <Previsao />
+          </Suspense>
+        );
       case "sobre":
         return <Sobre />;
       case "inicio":
@@ -56,7 +63,7 @@ function App() {
 
   return (
     <>
-      <div className="App">
+      <div className={menuSelecionado === "previsao" ? "App App--previsao" : "App"}>
         <Header
           menuSelecionado={menuSelecionado}
           selecionarMenu={setMenuSelecionado}

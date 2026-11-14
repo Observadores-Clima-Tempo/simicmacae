@@ -50,7 +50,7 @@ export interface DadoDiario {
   umidade: number;
 }
 
-export type MenuPagina = "inicio" | "estacoes" | "sobre";
+export type MenuPagina = "inicio" | "estacoes" | "previsao" | "sobre";
 
 export interface ChartPoint {
   time: string;
