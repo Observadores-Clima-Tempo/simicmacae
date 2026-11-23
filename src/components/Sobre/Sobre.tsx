@@ -1,3 +1,4 @@
+import logoUenf from "../../assets/logo-uenf-sem-texto.png";
 import "./Sobre.css";
 
 export default function Sobre() {
@@ -78,7 +79,16 @@ export default function Sobre() {
           <strong>Participantes:</strong> Luciana da Silva Costa Teixeira,
           Tamiles Ferreira de Souza e Valmir Monteiro Junior
         </li>
+        <li>
+          <strong>Colaboradores:</strong> Nadja Nucia Marinho Batista
+        </li>
       </ul>
+
+      <img
+        src={logoUenf}
+        alt="Universidade Estadual do Norte Fluminense Darcy Ribeiro"
+        className="logo-uenf"
+      />
     </main>
   );
 }

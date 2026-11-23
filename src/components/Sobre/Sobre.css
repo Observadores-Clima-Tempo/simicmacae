@@ -17,6 +17,13 @@
     padding-bottom: 8px;
   }
 
+  #sobre-o-projeto .logo-uenf {
+    display: block;
+    width: min(360px, 100%);
+    height: auto;
+    margin: 16px auto 0;
+  }
+
   #sobre-o-projeto h3 {
     font-size: 20px;
     color: #0e4d6f;
