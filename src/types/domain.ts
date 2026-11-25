@@ -1,7 +1,14 @@
+export interface Coordenadas {
+  lat: number;
+  lon: number;
+}
+
 export interface Estacao {
   id: string;
   bairro: string;
   operando: boolean;
+  /** Quando definidas, prevalecem sobre as coordenadas informadas pela estação. */
+  coordenadas?: Coordenadas;
 }
 
 export interface IntervaloIndiceCalor {

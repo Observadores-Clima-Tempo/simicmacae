@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import * as constantes from "../data/constantes";
+import { catalogoEstacoes } from "../data/estacoes";
 import type { DadoDiario, DadosComIndiceCalor } from "../types/domain";
 import { weatherServiceAPI } from "./weatherServiceAPI";
 import {
@@ -16,7 +17,12 @@ export const estacaoInstantaneaQueryOptions = (stationId: string) =>
         stationId,
         signal,
       );
-      return montarDadosComIndiceCalor(formatarDadoInstantaneo(resposta));
+      const dados = montarDadosComIndiceCalor(formatarDadoInstantaneo(resposta));
+      if (!dados) return null;
+
+      // O catálogo é a fonte autoritativa das coordenadas; a API é o fallback.
+      const coordenadas = catalogoEstacoes.getCoordenadasPorId(stationId);
+      return coordenadas ? { ...dados, ...coordenadas } : dados;
     },
     staleTime: constantes.PRAZO_VALIDADE_DADOS_INSTANTANEOS,
     refetchInterval: constantes.INTERVALO_ATUALIZACAO,

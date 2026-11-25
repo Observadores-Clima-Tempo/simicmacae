@@ -1,10 +1,14 @@
-import type { Estacao } from "../types/domain";
+import type { Coordenadas, Estacao } from "../types/domain";
 
 export const catalogoEstacoes = {
   getEstacoesAtivas: (): Estacao[] => ESTACOES.filter((s) => s.operando),
   getNomeBairroPorId: (stationId: string): string | null => {
     const estacao = ESTACOES.find((s) => s.id === stationId);
     return estacao ? estacao.bairro : null;
+  },
+  getCoordenadasPorId: (stationId: string): Coordenadas | null => {
+    const estacao = ESTACOES.find((s) => s.id === stationId);
+    return estacao?.coordenadas ?? null;
   },
   getPrimeiraEstacaoAtiva: (): Estacao | undefined => {
     return ESTACOES.find((s) => s.operando);
@@ -23,7 +27,12 @@ const ESTACOES: Estacao[] = [
   { id: "IMACA30", bairro: "Imboassica", operando: true },
   { id: "IMACA31", bairro: "Botafogo", operando: true },
   { id: "IMACA32", bairro: "Visconde de Araújo", operando: true },
-  { id: "IMACA36", bairro: "Córrego do Ouro", operando: true },
+  {
+    id: "IMACA36",
+    bairro: "Cidade Universitária",
+    operando: true,
+    coordenadas: { lat: -22.39036, lon: -41.806568 },
+  },
   { id: "IMACA41", bairro: "Lagomar", operando: true },
   { id: "IMACA42", bairro: "Virgem Santa", operando: true },
   { id: "IMACA43", bairro: "Aeroporto", operando: true },
